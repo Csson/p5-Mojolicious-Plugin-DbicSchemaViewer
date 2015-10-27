@@ -1,7 +1,7 @@
 %   use experimental 'postderef';
 %   use List::Util 'any';
 
-    <h1>Schema documentation</h1>
+    <h1>Schema documentation for <%= $schema_name %></h1>
 
 %   foreach my $rc ($db->{'sources'}->@*) {
 %       my $columns = $rc->{'columns'};

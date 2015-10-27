@@ -43,7 +43,7 @@ sub register($self, $app, $conf) {
 }
 
 sub tmpl($template) {
-    return join '/' => ('plugin', 'dbicschemaviewer', $template);
+    return join '/' => ('plugin-dbic-schema-viewer', $template);
 }
 
 sub schema_info($self, $schema) {
