@@ -7,7 +7,7 @@ package Mojolicious::Plugin::DbicSchemaViewer;
 # ABSTRACT: Viewer for DBIx::Class schemas
 
 use Mojo::Base 'Mojolicious::Plugin';
-use File::ShareDir 'dist_dir';
+use File::ShareDir::Tarball 'dist_dir';
 use Path::Tiny;
 use Data::Dump::Streamer;
 use experimental qw/signatures postderef/;
@@ -34,11 +34,16 @@ sub register($self, $app, $conf) {
 
     $app->log->info("Serving from " . join ', ' => $app->renderer->paths->@*);
 
+    my %layout = (layouts => 'plugin-dbic-schema-viewer-default');
+
     my $router = $app->routes->under($conf->{'under'}->@*);
     $router->get('/')->to(cb => sub ($c) {
-        warn 'hello';
-        $c->render(template => 'viewer/schema', db => $self->schema_info($schema), schema_name => ref $schema);
+        $c->render(%layout, template => tmpl('viewer/schema'), db => $self->schema_info($schema), schema_name => ref $schema);
     });
+}
+
+sub tmpl($template) {
+    return join '/' => ('plugin', 'dbicschemaviewer', $template);
 }
 
 sub schema_info($self, $schema) {
@@ -75,7 +80,7 @@ sub schema_info($self, $schema) {
         };
 
         foreach my $column_name ($rs->columns) {
-            my $column_info = $rs->column_info($column_name);
+            my $column_info = { $rs->column_info($column_name)->%* };
             my $data_type = delete $column_info->{'data_type'};
             $data_type = $column_info->{'is_enum'} && scalar $column_info->{'extra'}{'list'}->@* ? "enum/$data_type" : $data_type;
 
