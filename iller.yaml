@@ -20,6 +20,9 @@ plugins:
     +before: Git::Tag
     perl_version: 5.20
 
+  - +replace_plugin: ShareDir
+    +with: ShareDir::Tarball
+
 ---
 doctype: weaver
 
