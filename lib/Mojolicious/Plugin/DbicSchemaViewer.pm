@@ -34,7 +34,7 @@ sub register($self, $app, $conf) {
 
     $app->log->info("Serving from " . join ', ' => $app->renderer->paths->@*);
 
-    my %layout = (layouts => 'plugin-dbic-schema-viewer-default');
+    my %layout = (layout => 'plugin-dbic-schema-viewer-default');
 
     my $router = $app->routes->under($conf->{'under'}->@*);
     $router->get('/')->to(cb => sub ($c) {
