@@ -24,8 +24,11 @@ sub register($self, $app, $conf) {
             push $app->static->paths->@* => $share_dir->child('static')->realpath;
         }
         if($share_dir->child('templates')->is_dir) {
-            $app->log->info('  adding templates dir: ' . )
+            $app->log->info('  adds templates dir: ' . $share_dir->child('templates'));
             push $app->renderer->paths->@* => $share_dir->child('templates')->realpath;
+        }
+        else {
+            $app->log->info('  no template dir :(');
         }
     }
 

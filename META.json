@@ -24,14 +24,9 @@
       ]
    },
    "prereqs" : {
-      "build" : {
-         "requires" : {
-            "Module::Build" : "0.3601"
-         }
-      },
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.3601"
+            "Module::Build::Tiny" : "0.039"
          }
       },
       "develop" : {
@@ -55,7 +50,7 @@
             "Dist::Zilla::Plugin::MetaProvides::Class" : "0",
             "Dist::Zilla::Plugin::MetaProvides::Package" : "0",
             "Dist::Zilla::Plugin::MetaYAML" : "0",
-            "Dist::Zilla::Plugin::ModuleBuild" : "0",
+            "Dist::Zilla::Plugin::ModuleBuildTiny" : "0",
             "Dist::Zilla::Plugin::NextRelease" : "0",
             "Dist::Zilla::Plugin::NextVersion::Semantic" : "0",
             "Dist::Zilla::Plugin::OurPkgVersion" : "0",
