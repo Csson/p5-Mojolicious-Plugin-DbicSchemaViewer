@@ -1,0 +1,28 @@
+---
+doctype: dist
+
+header:
+  name: Mojolicious-Plugin-DbicSchemaViewer
+
+prereqs:
+  runtime:
+    requires:
+     - perl: 5.020000
+
+  test:
+    requires:
+
+
+plugins:
+  - +config: Author::CSSON
+
+  - +add_plugin: TravisYML
+    +before: Git::Tag
+    perl_version: 5.20
+
+---
+doctype: weaver
+
+plugins:
+  - +config: Author::CSSON
+  - +remove_plugin: Splint
