@@ -82,3 +82,5 @@
         </div>
 %       }
 %   }
+
+    <p>Powered by <a href="https://metacpan.org/pod/Mojolicious::Plugin::DbicSchemaViewer">Mojolicious::Plugin::DbicSchemaViewer</a></p>

@@ -4,27 +4,42 @@ use warnings;
 package Mojolicious::Plugin::DbicSchemaViewer;
 
 # VERSION:
-# ABSTRACT: Viewer for DBIx::Class schemas
+# ABSTRACT: Viewer for DBIx::Class schema definitions
 
 use Mojo::Base 'Mojolicious::Plugin';
 use File::ShareDir::Tarball 'dist_dir';
 use Path::Tiny;
 use Data::Dump::Streamer;
+use Safe::Isa;
 use experimental qw/signatures postderef/;
 
 sub register($self, $app, $conf) {
-    $conf->{'under'} ||= ['/admin/dbic'];
+
+    if(exists $conf->{'router'} && exists $conf->{'condition'}) {
+        my $exception = "Can't use both 'router' and 'condition' in M::P::DbicSchemaViewer";
+        $app->log->fatal($exception);
+        $app->reply->exception($exception);
+        return;
+    }
+    if(!exists $conf->{'schema'} || !$conf->{'schema'}->$_isa('DBIx::Class::Schema')) {
+        my $exception = "'schema' must be an DBIx::Class::Schema instance in M::P::DbicSchemaViewer";
+        $app->log->fatal($exception);
+        $app->reply->exception($exception);
+        return;
+    }
+
+    my $router = $conf->{'router'} || $app->routes;
+    my $url = $conf->{'url'} || 'dbic-schema-viewer';
     my $schema = $conf->{'schema'};
 
+
     my $share_dir = path(dist_dir('Mojolicious-Plugin-DbicSchemaViewer'));
-    $app->log->info('share_dir: ' . $share_dir);
+
     if($share_dir->is_dir) {
-        $app->log->info('  exists');
         if($share_dir->child('static')->is_dir) {
             push $app->static->paths->@* => $share_dir->child('static')->realpath;
         }
         if($share_dir->child('templates')->is_dir) {
-            $app->log->info('  adds templates dir: ' . $share_dir->child('templates'));
             push $app->renderer->paths->@* => $share_dir->child('templates')->realpath;
         }
         else {
@@ -32,18 +47,20 @@ sub register($self, $app, $conf) {
         }
     }
 
-    $app->log->info("Serving from " . join ', ' => $app->renderer->paths->@*);
 
-    my %layout = (layout => 'plugin-dbic-schema-viewer-default');
+    $router = exists $conf->{'router'}    ?  $conf->{'router'}
+            : exists $conf->{'condition'} ?  $app->routes->over($conf->{'condition'})
+            :                                $app->routes
+            ;
 
-    my $router = $app->routes->under($conf->{'under'}->@*);
-    $router->get('/')->to(cb => sub ($c) {
-        $c->render(%layout, template => tmpl('viewer/schema'), db => $self->schema_info($schema), schema_name => ref $schema);
+    $router->get($url)->to(cb => sub ($c) {
+        $self->render($c, 'viewer/schema', db => $self->schema_info($schema), schema_name => ref $schema);
     });
 }
 
-sub tmpl($template) {
-    return join '/' => ('plugin-dbic-schema-viewer', $template);
+sub render($self, $c, $template, @args) {
+    my %layout = (layout => 'plugin-dbic-schema-viewer-default');
+    $c->render(%layout, template => join ('/' => ('plugin-dbic-schema-viewer', $template)), @args);
 }
 
 sub schema_info($self, $schema) {
@@ -91,10 +108,8 @@ sub schema_info($self, $schema) {
             };
         }
 
-
         foreach my $relation_name (sort $rs->relationships) {
             my $relation = $rs->relationship_info($relation_name);
-         #   warn Dump $relation;
 
             my $class_name = $relation->{'class'} =~ s{^.*?::Result::}{}r;
             my $condition = Dump($relation->{'cond'})->Out;
@@ -124,8 +139,71 @@ sub schema_info($self, $schema) {
 
         push $db->{'sources'}->@* => $source;
     }
-  #  warn Dump $db;
     return $db;
 }
 
 1;
+
+
+__END__
+
+=pod
+
+=encoding utf-8
+
+=head1 SYNOPSIS
+
+    $self->plugin(DbicSchemaViewer => {
+        schema => Your::Schema->connect(...),
+    });
+
+=head1 DESCRIPTION
+
+This plugin is a simple viewer for L<DBIx::Class> schemas. It lists all C<ResultSources> with column definitions and and their relationships.
+
+=head2 Configuration
+
+The following settings are available. It is recommended to use either L<router> or L<condition> to place the viewer behind some kind of authorization check.
+
+=head3 schema
+
+Mandatory.
+
+Should be an instance of an C<DBIx::Class::Schema> class.
+
+=head3 url
+
+Optional.
+
+By default, the viewer is located at C</dbic-schema-viewer>.
+
+=head3 router
+
+Optional. Can not be used together with L<condition>.
+
+Use this when you which to place the viewer behind an C<under> route:
+
+    my $secure = $app->routes->under('/secure' => sub {
+        my $c = shift;
+        return defined $c->session('logged_in') ? 1 : 0;
+    });
+
+    $self->plugin(DbicSchemaViewer => {
+        router => $secure,
+        schema => Your::Schema->connect(...),
+    });
+    
+Now the viewer would be located, if the check is successful, at C</secure/dbic-schema-viewer>.
+
+=head3 condition
+
+Optional. Can not be used together with L<router>.
+
+Use this when you have a named condition you which to place the viewer behind:
+
+    $self->routes->add_condition(random => sub { return !int rand 4 });
+
+    $self->plugin(DbicSchemaViewer => {
+        condition => 'random',
+        schema => Your::Schema->connect(...),
+    });
