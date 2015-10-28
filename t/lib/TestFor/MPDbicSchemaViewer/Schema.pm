@@ -1,4 +1,4 @@
-package TestFor::MPDbicSchemaViewer;
+package TestFor::MPDbicSchemaViewer::Schema;
 
 use base 'DBIx::Class::Schema';
 
