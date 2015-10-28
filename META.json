@@ -90,6 +90,12 @@
       },
       "runtime" : {
          "requires" : {
+            "Data::Dump::Streamer" : "0",
+            "File::ShareDir::Tarball" : "0",
+            "Mojo" : "6.00",
+            "Path::Tiny" : "0",
+            "Safe::Isa" : "0",
+            "experimental" : "0",
             "perl" : "5.020000"
          }
       },
@@ -100,6 +106,8 @@
          "requires" : {
             "ExtUtils::MakeMaker" : "0",
             "File::Spec" : "0",
+            "Test::Deep" : "0",
+            "Test::Mojo" : "0",
             "Test::More" : "0.96"
          }
       }

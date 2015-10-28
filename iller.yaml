@@ -8,10 +8,18 @@ prereqs:
   runtime:
     requires:
      - perl: 5.020000
+     - Mojo: 6.00
+     - File::ShareDir::Tarball
+     - Path::Tiny
+     - Data::Dump::Streamer
+     - Safe::Isa
+     - experimental
 
   test:
     requires:
-
+     - Test::More
+     - Test::Mojo
+     - Test::Deep
 
 plugins:
   - +config: Author::CSSON

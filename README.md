@@ -2,7 +2,7 @@
 
 Mojolicious::Plugin::DbicSchemaViewer - Viewer for DBIx::Class schema definitions
 
-![Requires Perl 5.20](https://img.shields.io/badge/perl-5.20-brightgreen.svg) [![Travis status](https://api.travis-ci.org//.svg?branch=master)](https://travis-ci.org//)
+![Requires Perl 5.20+](https://img.shields.io/badge/perl-5.20+-brightgreen.svg) [![Travis status](https://api.travis-ci.org/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer.svg?branch=master)](https://travis-ci.org/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer)
 
 # VERSION
 
