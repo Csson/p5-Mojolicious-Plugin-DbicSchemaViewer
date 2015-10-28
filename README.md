@@ -2,7 +2,7 @@
 
 Mojolicious::Plugin::DbicSchemaViewer - Viewer for DBIx::Class schema definitions
 
-![Requires Perl 5.20+](https://img.shields.io/badge/perl-5.20+-brightgreen.svg) [![Travis status](https://api.travis-ci.org//.svg?branch=master)](https://travis-ci.org//)
+![Requires Perl 5.20](https://img.shields.io/badge/perl-5.20-brightgreen.svg) [![Travis status](https://api.travis-ci.org//.svg?branch=master)](https://travis-ci.org//)
 
 # VERSION
 
@@ -64,6 +64,10 @@ Use this when you have a named condition you which to place the viewer behind:
         condition => 'random',
         schema => Your::Schema->connect(...),
     });
+
+# SOURCE
+
+[https://github.com/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer](https://github.com/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer)
 
 # HOMEPAGE
 

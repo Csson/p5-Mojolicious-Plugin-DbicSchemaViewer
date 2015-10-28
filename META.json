@@ -82,6 +82,7 @@
             "Pod::Weaver::Section::Legal" : "0",
             "Pod::Weaver::Section::Name" : "0",
             "Pod::Weaver::Section::Region" : "0",
+            "Pod::Weaver::Section::Source::DefaultGitHub" : "0",
             "Pod::Weaver::Section::Version" : "0",
             "Test::Pod" : "1.41",
             "Test::Warnings" : "0"
@@ -110,7 +111,17 @@
       }
    },
    "release_status" : "stable",
-   "resources" : {},
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer/issues"
+      },
+      "homepage" : "https://metacpan.org/release/Mojolicious-Plugin-DbicSchemaViewer",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer.git",
+         "web" : "https://github.com/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer"
+      }
+   },
    "version" : "0.0001"
 }
 
