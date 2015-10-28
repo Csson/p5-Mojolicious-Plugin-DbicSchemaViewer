@@ -15,6 +15,7 @@ use experimental qw/signatures postderef/;
 
 sub register($self, $app, $conf) {
 
+    # check configuration
     if(exists $conf->{'router'} && exists $conf->{'condition'}) {
         my $exception = "Can't use both 'router' and 'condition' in M::P::DbicSchemaViewer";
         $app->log->fatal($exception);
@@ -28,30 +29,20 @@ sub register($self, $app, $conf) {
         return;
     }
 
-    my $router = $conf->{'router'} || $app->routes;
-    my $url = $conf->{'url'} || 'dbic-schema-viewer';
-    my $schema = $conf->{'schema'};
+    # add our template directory
+    my $template_dir = path(dist_dir('Mojolicious-Plugin-DbicSchemaViewer'))->child('templates');
 
-
-    my $share_dir = path(dist_dir('Mojolicious-Plugin-DbicSchemaViewer'));
-
-    if($share_dir->is_dir) {
-        if($share_dir->child('static')->is_dir) {
-            push $app->static->paths->@* => $share_dir->child('static')->realpath;
-        }
-        if($share_dir->child('templates')->is_dir) {
-            push $app->renderer->paths->@* => $share_dir->child('templates')->realpath;
-        }
-        else {
-            $app->log->info('  no template dir :(');
-        }
+    if($template_dir->is_dir) {
+        push $app->renderer->paths->@* => $template_dir->realpath;
     }
 
+    my $router = exists $conf->{'router'}    ?  $conf->{'router'}
+               : exists $conf->{'condition'} ?  $app->routes->over($conf->{'condition'})
+               :                                $app->routes
+               ;
 
-    $router = exists $conf->{'router'}    ?  $conf->{'router'}
-            : exists $conf->{'condition'} ?  $app->routes->over($conf->{'condition'})
-            :                                $app->routes
-            ;
+    my $url = $conf->{'url'} || 'dbic-schema-viewer';
+    my $schema = $conf->{'schema'};
 
     $router->get($url)->to(cb => sub ($c) {
         $self->render($c, 'viewer/schema', db => $self->schema_info($schema), schema_name => ref $schema);
@@ -67,6 +58,7 @@ sub schema_info($self, $schema) {
 
     my $db = { sources => [] };
 
+    # put View:: result sources last
     my @sorted_sources = sort grep { !/^View::/ } $schema->sources;
     push @sorted_sources => sort grep { /^View::/ } $schema->sources;
 
@@ -112,8 +104,10 @@ sub schema_info($self, $schema) {
             my $relation = $rs->relationship_info($relation_name);
 
             my $class_name = $relation->{'class'} =~ s{^.*?::Result::}{}r;
+
             my $condition = Dump($relation->{'cond'})->Out;
 
+            # cleanup the dump
             $condition =~ s{^.*?\{}{\{};
             $condition =~ s{\n\s*?package .*?\n}{\n};
             $condition =~ s{\n\s*?BEGIN.*?\n}{\n};
@@ -124,7 +118,6 @@ sub schema_info($self, $schema) {
             $condition =~ s{\n\s{8,8}}{\n    }g;
 
             my $on_cascade = [ sort map { $_ =~ s{^cascade_}{}rm } grep { m/^cascade/ && $relation->{'attrs'}{ $_ } } keys $relation->{'attrs'}->%* ];
-
 
             push $source->{'relationships'}->@* => {
                 name => $relation_name,

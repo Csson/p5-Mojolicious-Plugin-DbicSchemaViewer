@@ -19,6 +19,6 @@ $t->get_ok('/dbic-schema-viewer')->status_is(200);
 my $tok = $t->get_ok('/dbic-schema-viewer')->status_is(200);
 
 $tok->content_like(qr/for TestFor::MPDbicSchemaViewer::Schema/);
-$tok->content_like(qr/missing reverse/);
+$tok->content_like(qr/missing reverse/i);
 
 done_testing;

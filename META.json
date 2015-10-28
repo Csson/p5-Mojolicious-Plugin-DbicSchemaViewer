@@ -1,5 +1,5 @@
 {
-   "abstract" : "Viewer for DBIx::Class schemas",
+   "abstract" : "Viewer for DBIx::Class schema definitions",
    "author" : [
       "Erik Carlsson <info@code301.com>"
    ],
