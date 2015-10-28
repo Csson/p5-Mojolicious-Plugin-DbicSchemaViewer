@@ -5,7 +5,6 @@ use Test::More;
 use Test::Mojo;
 use Test::Deep;
 use Mojolicious::Lite;
-use Path::Tiny;
 
 use lib 't/lib';
 use TestFor::MPDbicSchemaViewer::Schema;
@@ -21,8 +20,5 @@ my $tok = $t->get_ok('/dbic-schema-viewer')->status_is(200);
 
 $tok->content_like(qr/for TestFor::MPDbicSchemaViewer::Schema/);
 $tok->content_like(qr/missing reverse/i);
-
-warn path('.')->realpath;
-path('../examples/example.html')->realpath->spew($tok->tx->res->text);
 
 done_testing;
