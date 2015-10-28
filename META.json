@@ -92,7 +92,7 @@
          "requires" : {
             "Data::Dump::Streamer" : "0",
             "File::ShareDir::Tarball" : "0",
-            "Mojo" : "6.00",
+            "Mojolicious" : "6.00",
             "Path::Tiny" : "0",
             "Safe::Isa" : "0",
             "experimental" : "0",
@@ -104,6 +104,7 @@
             "CPAN::Meta" : "2.120900"
          },
          "requires" : {
+            "DBIx::Class" : "0",
             "ExtUtils::MakeMaker" : "0",
             "File::Spec" : "0",
             "Test::Deep" : "0",

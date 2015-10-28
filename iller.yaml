@@ -8,7 +8,7 @@ prereqs:
   runtime:
     requires:
      - perl: 5.020000
-     - Mojo: 6.00
+     - Mojolicious: 6.00
      - File::ShareDir::Tarball
      - Path::Tiny
      - Data::Dump::Streamer
@@ -20,6 +20,7 @@ prereqs:
      - Test::More
      - Test::Mojo
      - Test::Deep
+     - DBIx::Class
 
 plugins:
   - +config: Author::CSSON
