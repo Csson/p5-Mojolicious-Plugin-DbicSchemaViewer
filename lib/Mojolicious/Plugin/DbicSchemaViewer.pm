@@ -156,7 +156,7 @@ This plugin is viewer for L<DBIx::Class> schemas. It lists all C<ResultSources> 
 
 =head2 Configuration
 
-The following settings are available. It is recommended to use either L<router> or L<condition> to place the viewer behind some kind of authorization check.
+The following settings are available. It is recommended to use either L</router> or L</condition> to place the viewer behind some kind of authorization check.
 
 =head3 schema
 
@@ -170,9 +170,16 @@ Optional.
 
 By default, the viewer is located at C</dbic-schema-viewer>.
 
+    $self->plugin(DbicSchemaViewer => {
+        url => '/the-schema',
+        schema => Your::Schema->connect(...),
+    });
+
+Now the viewer is located at C</the-schema>.
+
 =head3 router
 
-Optional. Can not be used together with L<condition>.
+Optional. Can not be used together with L</condition>.
 
 Use this when you which to place the viewer behind an C<under> route:
 
@@ -186,11 +193,11 @@ Use this when you which to place the viewer behind an C<under> route:
         schema => Your::Schema->connect(...),
     });
     
-Now the viewer would be located, if the check is successful, at C</secure/dbic-schema-viewer>.
+Now the viewer is located at C</secure/dbic-schema-viewer> (if the check is successful).
 
 =head3 condition
 
-Optional. Can not be used together with L<router>.
+Optional. Can not be used together with L</router>.
 
 Use this when you have a named condition you which to place the viewer behind:
 
