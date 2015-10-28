@@ -152,7 +152,7 @@ __END__
 
 =head1 DESCRIPTION
 
-This plugin is a simple viewer for L<DBIx::Class> schemas. It lists all C<ResultSources> with column definitions and and their relationships.
+This plugin is viewer for L<DBIx::Class> schemas. It lists all C<ResultSources> with column definitions and and their relationships. See C<examples/example.html> for an example.
 
 =head2 Configuration
 

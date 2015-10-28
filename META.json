@@ -116,7 +116,7 @@
    "provides" : {
       "Mojolicious::Plugin::DbicSchemaViewer" : {
          "file" : "lib/Mojolicious/Plugin/DbicSchemaViewer.pm",
-         "version" : "0.0001"
+         "version" : "0.0100"
       }
    },
    "release_status" : "stable",
@@ -131,6 +131,6 @@
          "web" : "https://github.com/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer"
       }
    },
-   "version" : "0.0001"
+   "version" : "0.0100"
 }
 

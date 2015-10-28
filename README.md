@@ -6,7 +6,7 @@ Mojolicious::Plugin::DbicSchemaViewer - Viewer for DBIx::Class schema definition
 
 # VERSION
 
-Version 0.0001, released 2015-10-28.
+Version 0.0100, released 2015-10-28.
 
 # SYNOPSIS
 
@@ -16,7 +16,7 @@ Version 0.0001, released 2015-10-28.
 
 # DESCRIPTION
 
-This plugin is a simple viewer for [DBIx::Class](https://metacpan.org/pod/DBIx::Class) schemas. It lists all `ResultSources` with column definitions and and their relationships.
+This plugin is viewer for [DBIx::Class](https://metacpan.org/pod/DBIx::Class) schemas. It lists all `ResultSources` with column definitions and and their relationships. See `examples/example.html` for an example.
 
 ## Configuration
 
