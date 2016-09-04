@@ -25,8 +25,7 @@ prereqs:
 plugins:
   - +config: Author::CSSON
 
-  - +add_plugin: TravisYML
-    +before: Git::Tag
+  - +replace_plugin: TravisYML
     perl_version: 5.20
 
   - +replace_plugin: ShareDir
