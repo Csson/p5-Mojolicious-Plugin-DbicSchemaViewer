@@ -3,8 +3,9 @@ use warnings;
 
 package Mojolicious::Plugin::DbicSchemaViewer;
 
-# VERSION:
 # ABSTRACT: Viewer for DBIx::Class schema definitions
+# AUTHORITY
+our $VERSION = '0.0102';
 
 use Mojo::Base 'Mojolicious::Plugin';
 use File::ShareDir::Tarball 'dist_dir';
