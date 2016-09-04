@@ -6,9 +6,10 @@ Revision history for Mojolicious-Plugin-DbicSchemaViewer
  [Bug Fixes]
 
  [Documentation]
- - Fixed bad internal links.
+ - Fixed some typos.
 
  [Enhancements]
+ - If DBIx::Class::Visualized is installed, a graphical representation of the schema can be rendered.
 
  [Meta]
 
@@ -19,6 +20,11 @@ Revision history for Mojolicious-Plugin-DbicSchemaViewer
  [Revision]
 
  [Testing]
+ - Expanded the test schema (which is also used as an example).
+
+0.0101 2015-10-28T19:08:49Z UTC
+ [Documentation]
+ - Fixed bad internal links.
 
 0.0100 2015-10-28T18:21:23Z UTC
  - Initial release

@@ -7,12 +7,30 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
     </head>
     <body>
-        <div class="container">
+        
+        <nav class="navbar navbar-default">
+            <div class="container">
+                
+        <div class="navbar-header">
             
+            <a class="navbar-brand" href="#">DbicSchemaViewer</a>
+        </div>
+    
+                
+            <div class="collapse navbar-collapse" id="collapsable-wwuznhvtxavscshqrpbd">
+                <ul class="nav navbar-nav"><li ><a href="/dbic-schema-viewer" >Overview</a></li><li ><a href="/dbic-schema-viewer/visualizer" >Visualized</a></li></ul>
+            </div>
+        
+            </div>
+        </nav>
+    
+        
+        
+<div class="container">
     <h1>Schema documentation for TestFor::MPDbicSchemaViewer::Schema</h1>
 
 
-        <h2 id="rc-many">Many</h2>
+        <h2 id="rc-author">Author</h2>
 
         <div class="panel panel-info">
             <div class="panel-heading">Columns</div>
@@ -30,14 +48,15 @@
                     </tr>
                 </thead>
                 <tbody>
+
                     <tr>
                         <td>
                                     pk
-                        <td>many_id</td>
+                        <td>author_id</td>
                         <td>
                             int
                         </td>
-                        <td></td>
+                        <td>yes</td>
                         <td></td>
                         <td></td>
                         <td>primary</td>
@@ -47,9 +66,23 @@
                     </tr>
                     <tr>
                         <td>
-                        <td>thedata</td>
+                        <td>name</td>
                         <td>
                             varchar
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <td>birth_date</td>
+                        <td>
+                            datetime
                         </td>
                         <td></td>
                         <td></td>
@@ -63,8 +96,31 @@
             </table>
         </div>
 
+        <div class="panel panel-warning">
+            <div class="panel-heading">Relationships</div>
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Accessor</th>
+                        <th style="white-space: nowrap;">Cascade on</th>
+                        <th>Condition</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#rc-bookauthor">book_authors</a></td>
+                        <td>BookAuthor</td>
+                        <td>multi</td>
+                        <td>copy, delete</td>
+                        <td><pre>author_id =&gt; book_authors.author_id</pre></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-        <h2 id="rc-one">One</h2>
+        <h2 id="rc-book">Book</h2>
 
         <div class="panel panel-info">
             <div class="panel-heading">Columns</div>
@@ -82,14 +138,15 @@
                     </tr>
                 </thead>
                 <tbody>
+
                     <tr>
                         <td>
                                     pk
-                        <td>one_id</td>
+                        <td>book_id</td>
                         <td>
                             int
                         </td>
-                        <td></td>
+                        <td>yes</td>
                         <td></td>
                         <td></td>
                         <td>primary</td>
@@ -99,7 +156,21 @@
                     </tr>
                     <tr>
                         <td>
-                        <td>thedata</td>
+                        <td>isbn</td>
+                        <td>
+                            varchar(13)
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <td>title</td>
                         <td>
                             varchar
                         </td>
@@ -129,19 +200,178 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><span class="alert-danger">Missing reverse relation</span> <a href="#rc-many">many</a></td>
-                        <td>Many</td>
+                        <td><a href="#rc-bookauthor">book_authors</a></td>
+                        <td>BookAuthor</td>
                         <td>multi</td>
                         <td>copy, delete</td>
-                        <td><pre>{ &quot;foreign.one_id&quot; =&gt; &#39;self.one_id&#39; };
-</pre></td>
+                        <td><pre>book_id =&gt; book_authors.book_id</pre></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 id="rc-bookauthor">BookAuthor</h2>
+
+        <div class="panel panel-info">
+            <div class="panel-heading">Columns</div>
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Autoinc</th>
+                        <th>Nullable</th>
+                        <th>Default</th>
+                        <th>Unique</th>
+                        <th>Indexed</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td>
+                                    pk
+                        <td>book_id</td>
+                        <td>
+                            int
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>primary</td>
+                        <td>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                                    pk
+                        <td>author_id</td>
+                        <td>
+                            int
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>primary</td>
+                        <td>
+                            
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel panel-warning">
+            <div class="panel-heading">Relationships</div>
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Accessor</th>
+                        <th style="white-space: nowrap;">Cascade on</th>
+                        <th>Condition</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="#rc-author">author</a></td>
+                        <td>Author</td>
+                        <td>single</td>
+                        <td></td>
+                        <td><pre>author_id =&gt; author.author_id</pre></td>
+                    </tr>
+                    <tr>
+                        <td><a href="#rc-book">book</a></td>
+                        <td>Book</td>
+                        <td>single</td>
+                        <td></td>
+                        <td><pre>book_id =&gt; book.book_id</pre></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2 id="rc-resultsourcewithmissingrelation">ResultSourceWithMissingRelation</h2>
+
+        <div class="panel panel-info">
+            <div class="panel-heading">Columns</div>
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Autoinc</th>
+                        <th>Nullable</th>
+                        <th>Default</th>
+                        <th>Unique</th>
+                        <th>Indexed</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td>
+                                    pk
+                        <td>an_id</td>
+                        <td>
+                            integer
+                        </td>
+                        <td>yes</td>
+                        <td></td>
+                        <td></td>
+                        <td>primary</td>
+                        <td>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <td>author_id</td>
+                        <td>
+                            int
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel panel-warning">
+            <div class="panel-heading">Relationships</div>
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Accessor</th>
+                        <th style="white-space: nowrap;">Cascade on</th>
+                        <th>Condition</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="alert-danger">Missing reverse relation</span> <a href="#rc-author">author</a></td>
+                        <td>Author</td>
+                        <td>single</td>
+                        <td></td>
+                        <td><pre>author_id =&gt; author.author_id</pre></td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
     <p>Powered by <a href="https://metacpan.org/pod/Mojolicious::Plugin::DbicSchemaViewer">Mojolicious::Plugin::DbicSchemaViewer</a></p>
+</div>
 
-        </div>
     </body>
 </html>

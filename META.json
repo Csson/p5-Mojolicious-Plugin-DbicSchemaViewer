@@ -85,7 +85,7 @@
             "Dist::Zilla::Plugin::Test::ReportPrereqs" : "0.021",
             "Dist::Zilla::Plugin::Test::Version" : "1.05",
             "Dist::Zilla::Plugin::TestRelease" : "0",
-            "Dist::Zilla::Plugin::TravisYML" : "0",
+            "Dist::Zilla::Plugin::TravisYML" : "1.15",
             "Dist::Zilla::Plugin::UploadToCPAN" : "0",
             "Pod::Elemental::Transformer::List" : "0",
             "Pod::Weaver::Plugin::SingleEncoding" : "0",
@@ -117,8 +117,10 @@
       "runtime" : {
          "requires" : {
             "Data::Dump::Streamer" : "0",
+            "DateTime::Tiny" : "1.06",
             "File::ShareDir::Tarball" : "0",
             "Mojolicious" : "6.00",
+            "Mojolicious::Plugin::BootstrapHelpers" : "0.0201",
             "Path::Tiny" : "0.072",
             "Safe::Isa" : "1.000005",
             "experimental" : "0",

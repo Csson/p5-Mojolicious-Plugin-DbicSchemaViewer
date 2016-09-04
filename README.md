@@ -8,6 +8,7 @@ Mojolicious::Plugin::DbicSchemaViewer - Viewer for DBIx::Class schema definition
     <a href="https://travis-ci.org/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer"><img src="https://api.travis-ci.org/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer.svg?branch=master" alt="Travis status" /></a>
     <a href="http://cpants.cpanauthors.org/release/CSSON/Mojolicious-Plugin-DbicSchemaViewer-0.0102"><img src="http://badgedepot.code301.com/badge/kwalitee/CSSON/Mojolicious-Plugin-DbicSchemaViewer/0.0102" alt="Distribution kwalitee" /></a>
     <a href="http://matrix.cpantesters.org/?dist=Mojolicious-Plugin-DbicSchemaViewer%200.0102"><img src="http://badgedepot.code301.com/badge/cpantesters/Mojolicious-Plugin-DbicSchemaViewer/0.0102" alt="CPAN Testers result" /></a>
+    <img src="https://img.shields.io/badge/coverage-65.3%-red.svg" alt="coverage 65.3%" />
     </p>
 </div>
 
@@ -23,7 +24,10 @@ Version 0.0102, released 2016-09-04.
 
 # DESCRIPTION
 
-This plugin is viewer for [DBIx::Class](https://metacpan.org/pod/DBIx::Class) schemas. It lists all `ResultSources` with column definitions and and their relationships. See `examples/example.html` for an example.
+This plugin is a viewer for [DBIx::Class](https://metacpan.org/pod/DBIx::Class) schemata. It lists all `ResultSources` with column definitions and and their relationships. See `examples/example.html` for
+an example (also available on [Github](http://htmlpreview.github.io/?https://github.com/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer/blob/master/examples/example.html)).
+
+Optionally, if [DBIx::Class::Visualizer](https://metacpan.org/pod/DBIx::Class::Visualizer) is installed, a graphical representation of the schema can be rendered using [GraphViz2](https://metacpan.org/pod/GraphViz2).
 
 ## Configuration
 
@@ -33,7 +37,7 @@ The following settings are available. It is recommended to use either ["router"]
 
 Mandatory.
 
-Should be an instance of an `DBIx::Class::Schema` class.
+An instance of a `DBIx::Class::Schema` class.
 
 ### url
 
@@ -46,7 +50,7 @@ By default, the viewer is located at `/dbic-schema-viewer`.
         schema => Your::Schema->connect(...),
     });
 
-Now the viewer is located at `/the-schema`.
+The viewer is instead located at `/the-schema`.
 
 ### router
 
