@@ -1,7 +1,7 @@
 %   use experimental 'postderef';
 %   use List::Util 'any';
-%   use Data::Printer;
 
+<div class="container">
     <h1>Schema documentation for <%= $schema_name %></h1>
 
 %   foreach my $rc ($db->{'sources'}->@*) {
@@ -25,8 +25,8 @@
                     </tr>
                 </thead>
                 <tbody>
+
             %   foreach my $column ($columns->@*) {
-            % p $column;
                     <tr>
                         <td>
                             %   if(any { $column->{'name'} eq $_ } $rc->{'primary_columns'}->@*) {
@@ -86,3 +86,4 @@
 %   }
 
     <p>Powered by <a href="https://metacpan.org/pod/Mojolicious::Plugin::DbicSchemaViewer">Mojolicious::Plugin::DbicSchemaViewer</a></p>
+</div>

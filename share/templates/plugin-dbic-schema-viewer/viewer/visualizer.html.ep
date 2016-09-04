@@ -1,0 +1,6 @@
+%   if($can_show_visualizer) {
+        <img src="<%= url_for 'visualizer_svg', format => 'svg' %>" style="display: block; margin-left: auto; margin-right: auto;" />
+%   }
+%   else {
+        <div class="container"><p>Requires <a href="http://https://metacpan.org/release/DBIx-Class-Visualizer">DBIx::Class::Visualizer</a>.</p></div>
+%   }
