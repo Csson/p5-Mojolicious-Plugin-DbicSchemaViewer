@@ -1,5 +1,6 @@
 %   use experimental 'postderef';
 %   use List::Util 'any';
+%   use Data::Printer;
 
     <h1>Schema documentation for <%= $schema_name %></h1>
 
@@ -25,6 +26,7 @@
                 </thead>
                 <tbody>
             %   foreach my $column ($columns->@*) {
+            % p $column;
                     <tr>
                         <td>
                             %   if(any { $column->{'name'} eq $_ } $rc->{'primary_columns'}->@*) {
