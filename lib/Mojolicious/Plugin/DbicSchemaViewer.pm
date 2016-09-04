@@ -12,10 +12,12 @@ use File::ShareDir::Tarball 'dist_dir';
 use Path::Tiny;
 use Data::Dump::Streamer;
 use Safe::Isa;
+use DateTime::Tiny;
+
 use experimental qw/signatures postderef/;
 
 sub register($self, $app, $conf) {
-
+    $app->plugin('BootstrapHelpers');
     # check configuration
     if(exists $conf->{'router'} && exists $conf->{'condition'}) {
         my $exception = "Can't use both 'router' and 'condition' in M::P::DbicSchemaViewer";
@@ -45,9 +47,17 @@ sub register($self, $app, $conf) {
     my $url = $conf->{'url'} || 'dbic-schema-viewer';
     my $schema = $conf->{'schema'};
 
+    my $can_show_visualizer = eval { require DBIx::Class::Visualizer; 1; };
+
     $router->get($url)->to(cb => sub ($c) {
         $self->render($c, 'viewer/schema', db => $self->schema_info($schema), schema_name => ref $schema);
-    });
+    })->name('schema');
+    $router->get("$url/visualizer")->to(cb => sub ($c) {
+        $self->render($c, 'viewer/visualizer', schema_name => ref $schema, can_show_visualizer => $can_show_visualizer);
+    })->name('visualizer');
+    $router->get("$url/visualizer/svg")->to(cb => sub ($c) {
+        $c->render(data => $self->visualizer($schema));
+    })->name('visualizer_svg');
 }
 
 sub render($self, $c, $template, @args) {
@@ -106,17 +116,27 @@ sub schema_info($self, $schema) {
 
             my $class_name = $relation->{'class'} =~ s{^.*?::Result::}{}r;
 
-            my $condition = Dump($relation->{'cond'})->Out;
+            my $condition;
+            # simple one column to one column relation: this_result_id => relation_name.that_result_id
+            if(ref $relation->{'cond'} eq 'HASH' && scalar keys $relation->{'cond'}->%* == 1) {
+                my @cleaned_condition = ((values $relation->{'cond'}->%*)[0] =~ s{^self\.}{}rx);
+                push @cleaned_condition => (keys $relation->{'cond'}->%*)[0] =~ s{^foreign(?=\.)}{$relation_name}rx;
+                $condition = join ' => ', @cleaned_condition;
+            }
+            # more complicated relation: dump relation to text and remove boilerplate
+            else {
+                $condition = Dump($relation->{'cond'})->Out;
 
-            # cleanup the dump
-            $condition =~ s{^.*?\{}{\{};
-            $condition =~ s{\n\s*?package .*?\n}{\n};
-            $condition =~ s{\n\s*?BEGIN.*?\n}{\n};
-            $condition =~ s{\n\s*?use strict.*\n}{\n}g;
-            $condition =~ s{\n\s*?use feature.*\n}{\n}g;
-            $condition =~ s{\n\s*?no feature.*\n}{\n}g;
-            $condition =~ s{\n\s{3,}\}}{\n\}};
-            $condition =~ s{\n\s{8,8}}{\n    }g;
+                # cleanup the dump
+                $condition =~ s{^.*?\{}{\{};
+                $condition =~ s{\n\s*?package .*?\n}{\n};
+                $condition =~ s{\n\s*?BEGIN.*?\n}{\n};
+                $condition =~ s{\n\s*?use strict.*?\n}{\n}g;
+                $condition =~ s{\n\s*?use feature.*?\n}{\n}g;
+                $condition =~ s{\n\s*?no feature.*?\n}{\n}g;
+                $condition =~ s{\n\s{3,}\}}{\n\}};
+                $condition =~ s{\n\s{8,8}}{\n    }g;
+            }
 
             my $on_cascade = [ sort map { $_ =~ s{^cascade_}{}rm } grep { m/^cascade/ && $relation->{'attrs'}{ $_ } } keys $relation->{'attrs'}->%* ];
 
@@ -134,6 +154,10 @@ sub schema_info($self, $schema) {
         push $db->{'sources'}->@* => $source;
     }
     return $db;
+}
+
+sub visualizer($self, $schema) {
+    return DBIx::Class::Visualizer->new(schema => $schema)->svg;
 }
 
 1;
