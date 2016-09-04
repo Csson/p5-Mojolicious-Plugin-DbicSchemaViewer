@@ -1,11 +1,16 @@
-package TestFor::MPDbicSchemaViewer::Schema::Result::AnotherResultSource;
+package TestFor::MPDbicSchemaViewer::Schema::Result::ResultSourceWithMissingRelation;
 
 use base 'DBIx::Class::Core';
 
 __PACKAGE__->table('Author');
 __PACKAGE__->add_columns(
-    an_id => { data_type => 'integer', is_auto_increment => 1 },
-    author_id => { data_type => 'int' },
+    an_id => {
+        data_type => 'integer',
+        is_auto_increment => 1,
+    },
+    author_id => {
+        data_type => 'int',
+    },
 );
 
 __PACKAGE__->set_primary_key(qw/an_id/);
