@@ -14,6 +14,10 @@ prereqs:
      - Data::Dump::Streamer
      - Safe::Isa
      - experimental
+     - DateTime::Tiny: 1.06
+     - Mojolicious::Plugin::BootstrapHelpers: 0.0201
+    recommended:
+     - DBIx::Class::Visualizer: 0.0100
 
   test:
     requires:
@@ -25,7 +29,7 @@ prereqs:
 plugins:
   - +config: Author::CSSON
 
-  - +replace_plugin: TravisYML
+  - +extend_plugin: TravisYML
     perl_version: 5.20
 
   - +replace_plugin: ShareDir
@@ -37,3 +41,12 @@ doctype: weaver
 plugins:
   - +config: Author::CSSON
   - +remove_plugin: Splint
+
+---
+doctype: cpanfile
+
+---
+doctype: gitignore
+config: Author::CSSON
+always:
+ - /Mojolicious-Plugin-DbicSchemaViewer-*
