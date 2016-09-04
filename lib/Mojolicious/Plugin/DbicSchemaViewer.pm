@@ -18,6 +18,7 @@ use experimental qw/signatures postderef/;
 
 sub register($self, $app, $conf) {
     $app->plugin('BootstrapHelpers');
+
     # check configuration
     if(exists $conf->{'router'} && exists $conf->{'condition'}) {
         my $exception = "Can't use both 'router' and 'condition' in M::P::DbicSchemaViewer";
@@ -113,7 +114,6 @@ sub schema_info($self, $schema) {
 
         foreach my $relation_name (sort $rs->relationships) {
             my $relation = $rs->relationship_info($relation_name);
-
             my $class_name = $relation->{'class'} =~ s{^.*?::Result::}{}r;
 
             my $condition;
@@ -177,7 +177,10 @@ __END__
 
 =head1 DESCRIPTION
 
-This plugin is viewer for L<DBIx::Class> schemas. It lists all C<ResultSources> with column definitions and and their relationships. See C<examples/example.html> for an example.
+This plugin is a viewer for L<DBIx::Class> schemata. It lists all C<ResultSources> with column definitions and and their relationships. See C<examples/example.html> for
+an example (also available on L<Github|http://htmlpreview.github.io/?https://github.com/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer/blob/master/examples/example.html>).
+
+Optionally, if L<DBIx::Class::Visualizer> is installed, a graphical representation of the schema can be rendered using L<GraphViz2>.
 
 =head2 Configuration
 
@@ -187,7 +190,7 @@ The following settings are available. It is recommended to use either L</router>
 
 Mandatory.
 
-Should be an instance of an C<DBIx::Class::Schema> class.
+An instance of a C<DBIx::Class::Schema> class.
 
 =head3 url
 
@@ -200,7 +203,7 @@ By default, the viewer is located at C</dbic-schema-viewer>.
         schema => Your::Schema->connect(...),
     });
 
-Now the viewer is located at C</the-schema>.
+The viewer is instead located at C</the-schema>.
 
 =head3 router
 
