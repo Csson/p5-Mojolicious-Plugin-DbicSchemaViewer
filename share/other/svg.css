@@ -1,1 +1,60 @@
-svg {}
+svg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.edge * {
+    stroke-width: 2;
+    stroke: #444444;
+}
+.edge:hover {
+    cursor: pointer;
+}
+.edge.hovered path,
+.edge.hovered polygon,
+.edge.hovered polyline,
+.edge.hovered ellipse {
+    stroke: #ff5050;
+}
+.edge.column_relations path,
+.edge.column_relations polygon,
+.edge.column_relations polyline,
+.edge.column_relations ellipse {
+    stroke: #54b9f7;
+}
+
+.node polygon {
+    stroke-width: 0.4;
+}
+.node polygon.border {
+    stroke: #444444;
+    fill: none;
+}
+.node.related_table polygon.border {
+    stroke-width: 1.75;
+    stroke: #54b9f7;
+}
+.node.faded text {
+    fill-opacity: 0.7;
+}
+.node polygon.column_name {
+    fill: #fefefe;
+}
+.node polygon.table_name {
+    fill: #dddfdd;
+}
+.node.hovered polygon.table_name {
+    fill: #bdddff;
+    cursor: pointer;
+}
+.node text.table_name:hover {
+    cursor: pointer;
+}
+
+.node polygon.column_name.hovered {
+    fill: #fff333;
+    cursor: pointer;
+}
+.node text.column_name:hover {
+    cursor: pointer;
+}
