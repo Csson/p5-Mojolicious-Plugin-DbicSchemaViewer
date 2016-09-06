@@ -50,14 +50,16 @@ sub register($self, $app, $conf) {
 
     my $can_show_visualizer = eval { require DBIx::Class::Visualizer; 1; };
 
-    $router->get($url)->to(cb => sub ($c) {
+
+    my $base = $router->get($url);
+    $base->get('/')->to(cb => sub ($c) {
         $self->render($c, 'viewer/schema', db => $self->schema_info($schema), schema_name => ref $schema);
     })->name('schema');
-    $router->get("$url/visualizer")->to(cb => sub ($c) {
+    $base->get('visualizer')->to(cb => sub ($c) {
         $self->render($c, 'viewer/visualizer', schema_name => ref $schema, can_show_visualizer => $can_show_visualizer);
     })->name('visualizer');
-    $router->get("$url/visualizer/svg")->to(cb => sub ($c) {
-        $c->render(data => $self->visualizer($schema));
+    $base->get('/visualizer/svg')->to(cb => sub ($c) {
+        $c->render(data => DBIx::Class::Visualizer->new(schema => $schema)->svg);
     })->name('visualizer_svg');
 }
 
@@ -157,7 +159,7 @@ sub schema_info($self, $schema) {
 }
 
 sub visualizer($self, $schema) {
-    return DBIx::Class::Visualizer->new(schema => $schema)->svg;
+    ;
 }
 
 1;

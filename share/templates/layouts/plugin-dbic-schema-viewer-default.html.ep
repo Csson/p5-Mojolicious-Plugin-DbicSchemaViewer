@@ -3,8 +3,75 @@
     <head>
         <meta charset="utf-8" />
         <title>DbicSchemaViewer - <%= $schema_name %></title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+        %= bootstrap 'allq'
+        <script>
+            $(document).ready(function() {
+                var svg = document.getElementById('visualized');
+                svg.addEventListener('load', function() {
+                    var doc = svg.contentDocument;
+                    var $doc = $(doc);
+                    console.log($doc);
+
+                    //$doc.find('g.edge').mouseenter(function(e) {
+                   /*     $this.data('clicked-before-enter') = $this.data('clicked');
+                    });*/
+                    $doc.find('g.edge').mouseover(function(e) {
+                        var $this = $(this);
+                        $this.css('cursor', 'pointer');
+
+                      /*  if($this.data('clicked-before-enter')) {
+                            if($this.data('clicked')) {
+                                set_path_colors($this, '#ff4444');
+                            }
+                            else {
+                                set_path_colors($this, '#ff4444');
+                            }
+                        }
+                        else {*/
+                            set_path_colors($this, '#ff4444');
+                       // }
+                    });
+                    $doc.find('g.edge').mouseout(function(e) {
+                        var $this = $(this);
+                        if(!$this.data('clicked')) {
+                            set_path_colors($this, '#444444');
+                        }
+                    });
+                    $doc.find('g.edge').click(function(e) {
+                        var $this = $(this);
+                        if($this.data('clicked')) {
+                            $this.data('clicked', 0);
+                            set_path_colors($this, '#444444');
+                        }
+                        else {
+                            $this.data('clicked', 1);
+                        }
+                    });
+                    $doc.find('text').hover(function(e) {
+                        var $el = $(this);
+                        $el.prev('text').prev('polygon').attr('fill', '#fee333');
+                    });
+                    $doc.find('text').mouseout(function(e) {
+                        var $el = $(this);
+                        $el.prev('text').prev('polygon').attr('fill', '#fefefe');
+                    });
+                    $(doc).keyup(function(e) {
+                        // escape -> restore
+                        if(e.keyCode == 27) {
+                            $doc.find('g.edge').each(function(index) {
+                                set_path_colors($(this), '#444444');
+                            });
+                        }
+                    });
+                });
+            });
+            function set_path_colors($el, color) {
+                $el.find('path').attr('stroke', color);
+                $el.find('polyline').attr('stroke', color);
+                $el.find('polygon').attr('stroke', color);
+                $el.find('ellipse').attr('stroke', color);
+            }
+        </script>
     </head>
     <body>
         <%= navbar header => ['DbicSchemaViewer', ['#']],

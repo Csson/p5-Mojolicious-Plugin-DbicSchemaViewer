@@ -4,6 +4,7 @@ Revision history for Mojolicious-Plugin-DbicSchemaViewer
  [API Changes]
 
  [Bug Fixes]
+ - Fixed a missing html closing tag in the output.
 
  [Documentation]
 

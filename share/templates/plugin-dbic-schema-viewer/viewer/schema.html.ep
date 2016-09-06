@@ -35,6 +35,7 @@
                             %   elsif($column->{'is_foreign_key'}) {
                                     fk
                             %   }
+                        </td>
                         <td><%= $column->{'name'} %></td>
                         <td>
                             <%= $column->{'data_type'} %><%= exists $column->{'size'} ? qq{($column->{'size'})} : '' %>
