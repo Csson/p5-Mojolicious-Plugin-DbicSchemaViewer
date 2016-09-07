@@ -56,11 +56,14 @@ sub register($self, $app, $conf) {
         $self->render($c, 'viewer/schema', db => $self->schema_info($schema), schema_name => ref $schema);
     })->name('schema');
     $base->get('visualizer')->to(cb => sub ($c) {
-        $self->render($c, 'viewer/visualizer', schema_name => ref $schema, can_show_visualizer => $can_show_visualizer);
+        $self->render($c, 'viewer/visualizer', schema_name => ref $schema, can_show_visualizer => $can_show_visualizer, svg => DBIx::Class::Visualizer->new(schema => $schema)->svg);
     })->name('visualizer');
     $base->get('/visualizer/svg')->to(cb => sub ($c) {
         $c->render(data => DBIx::Class::Visualizer->new(schema => $schema)->svg);
     })->name('visualizer_svg');
+    $base->get('/svg.css')->to(cb => sub ($c) {
+        $c->render(format => 'css', data => path(dist_dir('Mojolicious-Plugin-DbicSchemaViewer'))->child('other/svg.css')->slurp);
+    })->name('svg_css');
 }
 
 sub render($self, $c, $template, @args) {
