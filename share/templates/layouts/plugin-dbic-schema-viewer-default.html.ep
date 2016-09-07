@@ -8,7 +8,6 @@
         <script>
             $(document).ready(function() {
                 var $doc = $('svg');
-                console.log($doc);
 
                 $doc.find('g.edge').hover(function(e) {
                     var $this = $(this);
@@ -35,43 +34,53 @@
                 // Handle column name hovers
                 $doc.find('polygon.column_name, text.column_name').mouseenter(function(e) {
                     var $selected = $(this);
-                    var tagName = $selected.prop('tagName');
-                    var $el = tagName === 'polygon' ? $selected.next('text.column_name') : $selected;
-                    var $polygon = tagName === 'text' ? $selected.prev('polygon.column_name') : $selected;
 
+                    var $el = $selected.parent().find('text' + byAttr('data-column-name', $selected));
+                    var $polygon = $selected.parent().find('polygon' + byAttr('data-column-name', $selected));
                     // highlight
                     $polygon.addClass('hovered');
 
                     // show edges representing relationships from/to this column
-                    var table = $el.parent().find('title').first().text();
-                    var column = $el.text();
+                    var table = $el.parent().data('table-name');
+                    var column = $el.data('column-name');
+                    console.log(table, column, getEdgesByTableColumn(table, column));
 
-                    $doc.find('.edge').each(function(index) {
+                    $doc.find(getEdgesByTableColumn(table, column)).each(function(index) {
                         var $edge = $(this);
-                        var edge_title = $edge.find('title:first').text();
 
-                        if(possibly_highlight_relation(edge_title, table, column)) {
-                            $edge.addClass('column_relations');
-                            $edge.appendTo($edge.parent());
-                            $edge.attr('data-highlighted-by', $el.parent().attr('id') + '_' + column);
-                        }
+                        $edge.addClass('column_relations');
+                        $edge.appendTo($edge.parent());
+
+                        var otherTableName = table === $edge.data('origin-table') ? $edge.data('destination-table') : $edge.data('origin-table');
+                        var $otherTable = $doc.find('.node[data-table-name="' + otherTableName + '"]');
+                        addHighlightedBy($edge, table + '.' + column);
+                        $otherTable.addClass('related_table');
                     });
                     if($doc.find('.node.related_table').size()) {
                         $doc.find('.node:not(.related_table):not(.hovered):not([id="' + $el.parent().attr('id') + '"])').addClass('faded');
                     }
                 });
                 $doc.find('polygon.column_name, text.column_name').mouseout(function(e) {
-                    var $this = $(this).prop('tagName') === 'polygon' ? $(this).next('text.column_name') : $(this);
-                    var $polygon = $this.prev('polygon.column_name');
+                    var $this = $(this).parent().find('text' + byAttr('data-column-name', $(this)));
+                    var $polygon = $(this).parent().find('polygon' + byAttr('data-column-name', $(this)));
+
                     if($this.data('clicked')) {
                         return;
                     }
+                    var tableName = $this.parent().data('table-name');
+                    var columnName = $this.data('column-name');
                     $polygon.removeClass('hovered');
-                    $doc.find('.edge[data-highlighted-by="' + $this.parent().attr('id') + '"]').removeClass('column_relations');
+                    $doc.find('.edge[data-highlighted-by*="#' + tableName + '.' + columnName + '#"]').each(function() {
+                        var $el = $(this);
+                        removeHighlightedBy($el, tableName + '.' + columnName);
+                        if(!$el.attr('data-highlighted-by').length) {
+                            $el.removeClass('column_relations');
+                        }
+                    });
                     $doc.find('.node').removeClass('related_table').removeClass('faded');
                 });
                 $doc.find('polygon.column_name, text.column_name').click(function(e) {
-                    var $this = $(this).prop('tagName') === 'polygon' ? $(this).next('text.column_name') : $(this);
+                    var $this = $(this).parent().find('text' + byAttr('data-column-name', $(this)));
                     if($this.data('clicked')) {
                         $this.data('clicked', 0);
                         $this.removeClass('hovered');
@@ -83,24 +92,26 @@
 
                 // Highlight all relations to/from a table when the table name cell is hovered.
                 $doc.find('polygon.table_name, text.table_name').mouseenter(function(e) {
-                    var $selected = $(this);
-                    
+                    var $node = $(this).parent();
+
                     // There can be more than one such polygon
-                    $selected.parent().addClass('hovered');
+                    $node.addClass('hovered');
 
-                    var table = $selected.parent().find('text.table_name').text();
-                    $selected.parent().find('text.column_name').each(function(i) {
-                        var column = $(this).text();
-                        
-                        $doc.find('.edge title:contains("' + column + '")').each(function(j) {
-                            var $edge = $(this).parent();
-                            var edge_title = $edge.find('title:first').text();
-                            console.log(edge_title, ',', table, ',', column);
+                    var tableName = $node.data('table-name');
+                    $node.find('text.column_name').each(function(i) {
+                        var columnName = $(this).data('column-name');
 
-                            if(possibly_highlight_relation(edge_title, table, column)) {
-                                $edge.addClass('column_relations');
-                                $edge.appendTo($edge.parent());
-                            }
+                        $doc.find(getEdgesByTableColumn(tableName, columnName)).each(function(index) {
+                            var $edge = $(this);
+                            $edge.addClass('column_relations');
+                            $edge.appendTo($edge.parent());
+                            addHighlightedBy($edge, tableName);
+
+                            var otherTable = tableName === $edge.data('origin-table') ? $edge.data('destination-table') : $edge.data('origin-table');
+                            var $otherTable = $doc.find('.node[data-table-name="' + otherTable + '"]');
+                            $otherTable.addClass('related_table');
+
+                            $edge.appendTo($edge.parent());
                         });
                     });
                     if($doc.find('.node.related_table').size()) {
@@ -108,24 +119,69 @@
                     }
                 });
                 $doc.find('polygon.table_name, text.table_name').mouseout(function(e) {
-                    var $selected = $(this);
+                    var $node = $(this).parent();
+                    if($node.data('clicked')) {
+                        return;
+                    }
 
-                    $selected.parent().removeClass('hovered');
-                    $doc.find('.edge').removeClass('column_relations');
+                    $node.removeClass('hovered');
+                    $doc.find('.edge[data-highlighted-by*="#' + $node.data('table-name') + '#"]').each(function() {
+                        var $el = $(this);
+                        removeHighlightedBy($(this), $node.data('table-name'));
+                        if(!$el.attr('data-highlighted-by').length) {
+                            $el.removeClass('column_relations');
+                        }
+                    });
                     $doc.find('.node').removeClass('related_table').removeClass('faded');
+                });
+                $doc.find('polygon.table_name, text.table_name').click(function(e) {
+                    var $node = $(this).parent();
+                    if($node.data('clicked')) {
+                        $node.data('clicked', 0);
+                        $node.removeClass('hovered');
+                    }
+                    else {
+                        $node.data('clicked', 1);
+                    }
                 });
 
                 $(document).keyup(function(e) {
                     // escape -> restore
                     console.log('keuup', e.keyCode);
                     if(e.keyCode == 27) {
-                        $doc.find('.edge').removeClass('hovered').data('clicked', 0);
-                        $doc.find('.node').removeClass('hovered').data('clicked', 0);
+                        $doc.find('.edge').removeClass('hovered column_relations').data('clicked', 0);
+                        $doc.find('.node').removeClass('hovered related_table').data('clicked', 0);
                         $doc.find('.text').removeClass('hovered').data('clicked', 0);
                     }
                 });
             });
-
+            // call byAttr('data-column-name', $el)  instead of  '[data-column-name="' + $el.attr('data-column-name') + '"]'
+            function byAttr(attr, $el) {
+                return '[' + attr + '="' + $el.attr(attr) + '"]';
+            }
+            function getEdgesByTableColumn(table, column) {
+                return '.edge[data-origin-table="' + table + '"][data-origin-column="' + column +'"], .edge[data-destination-table="' + table + '"][data-destination-column="' + column +'"]';
+            }
+            function addHighlightedBy($el, by) {
+                if($el.attr('data-highlighted-by')) {
+                    var currentvalue = $el.attr('data-highlighted-by');
+                    if(!currentvalue.match(new RegExp('#' + by + '#'))) {
+                        var newValue = $el.attr('data-highlighted-by') + '#' + by + '#';
+                        $el.attr('data-highlighted-by', newValue);
+                    }
+                    else {
+                        console.log($el.attr('data-highlighted-by'), '< apparently matched >', by );
+                    }
+                }
+                else {
+                    $el.attr('data-highlighted-by', '#' + by + '#');
+                }
+                console.log('after added highlight by: ', '(' + by + ')', $el.attr('data-highlighted-by'));
+            }
+            function removeHighlightedBy($el, by) {
+                $el.attr('data-highlighted-by', $el.attr('data-highlighted-by').replace(new RegExp('#' + by + '#', 'g'), ''));
+                console.log('after removed highlight by:', '(' + by + ')', $el.attr('data-highlighted-by'));
+            }
             function get_hovered_edge_id($el) {
                 if($el.hasClass('hovered_edge')) {
                     return '#' + $el.attr('id');

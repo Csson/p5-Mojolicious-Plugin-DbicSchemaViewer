@@ -47,12 +47,15 @@ svg {
     fill: #bdddff;
     cursor: pointer;
 }
+.node text.table_name {
+    fill: #333333;
+}
 .node text.table_name:hover {
     cursor: pointer;
 }
 
 .node polygon.column_name.hovered {
-    fill: #fff333;
+    fill: #e8efff;
     cursor: pointer;
 }
 .node text.column_name:hover {
