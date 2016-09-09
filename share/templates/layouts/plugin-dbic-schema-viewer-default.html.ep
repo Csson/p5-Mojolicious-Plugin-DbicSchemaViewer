@@ -4,163 +4,208 @@
         <meta charset="utf-8" />
         <title>DbicSchemaViewer - <%= $schema_name %></title>
         %= bootstrap 'allq'
-        <link rel="stylesheet" href="<%= url_for 'svg_css' %>" type="text/css" />
+        <link rel="stylesheet" href="/dbic-schema-viewer/svg.css" type="text/css" />
         <script>
+            var pressedKeys = {
+                ctrl: false,
+                shift: false,
+                alt: false,
+            };
             $(document).ready(function() {
                 var $doc = $('svg');
 
-                $doc.find('g.edge').hover(function(e) {
-                    var $this = $(this);
-                    $this.addClass('hovered');
-                    $this.appendTo($this.parent());
-                    $this.css('cursor', 'pointer');
-                });
-                $doc.find('g.edge').mouseout(function(e) {
-                    var $this = $(this);
-                    if(!$this.data('clicked')) {
-                        $this.removeClass('hovered');
-                    }
-                });
-                $doc.find('g.edge').click(function(e) {
-                    var $this = $(this);
-                    if($this.data('clicked')) {
-                        $this.data('clicked', 0);
-                        $this.removeClass('hovered');
-                    }
-                    else {
-                        $this.data('clicked', 1);
-                    }
-                });
-                // Handle column name hovers
-                $doc.find('polygon.column_name, text.column_name').mouseenter(function(e) {
-                    var $selected = $(this);
-
-                    var $el = $selected.parent().find('text' + byAttr('data-column-name', $selected));
-                    var $polygon = $selected.parent().find('polygon' + byAttr('data-column-name', $selected));
-                    // highlight
-                    $polygon.addClass('hovered');
-
-                    // show edges representing relationships from/to this column
-                    var table = $el.parent().data('table-name');
-                    var column = $el.data('column-name');
-                    console.log(table, column, getEdgesByTableColumn(table, column));
-
-                    $doc.find(getEdgesByTableColumn(table, column)).each(function(index) {
+                $doc.find('.edge')
+                    .hover(function(e) {
                         var $edge = $(this);
 
-                        $edge.addClass('column_relations');
+                        $edge.addClass('hovered');
                         $edge.appendTo($edge.parent());
+                        $edge.css('cursor', 'pointer');
+                    })
+                    .mouseout(function(e) {
+                        var $edge = $(this);
 
-                        var otherTableName = table === $edge.data('origin-table') ? $edge.data('destination-table') : $edge.data('origin-table');
-                        var $otherTable = $doc.find('.node[data-table-name="' + otherTableName + '"]');
-                        addHighlightedBy($edge, table + '.' + column);
-                        $otherTable.addClass('related_table');
-                    });
-                    if($doc.find('.node.related_table').size()) {
-                        $doc.find('.node:not(.related_table):not(.hovered):not([id="' + $el.parent().attr('id') + '"])').addClass('faded');
-                    }
-                });
-                $doc.find('polygon.column_name, text.column_name').mouseout(function(e) {
-                    var $this = $(this).parent().find('text' + byAttr('data-column-name', $(this)));
-                    var $polygon = $(this).parent().find('polygon' + byAttr('data-column-name', $(this)));
-
-                    if($this.data('clicked')) {
-                        return;
-                    }
-                    var tableName = $this.parent().data('table-name');
-                    var columnName = $this.data('column-name');
-                    $polygon.removeClass('hovered');
-                    $doc.find('.edge[data-highlighted-by*="#' + tableName + '.' + columnName + '#"]').each(function() {
-                        var $el = $(this);
-                        removeHighlightedBy($el, tableName + '.' + columnName);
-                        if(!$el.attr('data-highlighted-by').length) {
-                            $el.removeClass('column_relations');
+                        if(!$edge.attr('data-clicked')) {
+                            $edge.removeClass('hovered');
+                        }
+                    })
+                    .click(function(e) {
+                        var $edge = $(this);
+                        if($edge.attr('data-clicked')) {
+                            $edge.removeAttr('data-clicked');
+                        }
+                        else {
+                            $edge.attr('data-clicked', 1);
                         }
                     });
-                    $doc.find('.node').removeClass('related_table').removeClass('faded');
-                });
-                $doc.find('polygon.column_name, text.column_name').click(function(e) {
-                    var $this = $(this).parent().find('text' + byAttr('data-column-name', $(this)));
-                    if($this.data('clicked')) {
-                        $this.data('clicked', 0);
-                        $this.removeClass('hovered');
-                    }
-                    else {
-                        $this.data('clicked', 1);
-                    }
-                });
+
+                // Handle column name hovers
+                $doc.find('polygon.column-name, text.column-name')
+                    .mouseenter(function(e) {
+                        var $selected = $(this);
+
+                        var $el = $selected.parent().find('text' + byAttr('data-column-name', $selected));
+                        var $polygon = $selected.parent().find('polygon' + byAttr('data-column-name', $selected));
+
+                        $polygon.addClass('hovered');
+                        highlightRelation($doc, $el.parent().data('table-name'), $el.data('column-name'));
+                        console.log(param('degrees_of_separation'), param('result_sources'));
+                    })
+                    .mouseout(function(e) {
+                        var $text = $(this).parent().find('text' + byAttr('data-column-name', $(this)));
+                        var $polygon = $text.parent().find('polygon' + byAttr('data-column-name', $text));
+
+                        if($text.attr('data-clicked')) {
+                            return;
+                        }
+                        $polygon.removeClass('hovered');
+                        removeDependentHighlights($doc, $text.parent().data('table-name') + '.' + $text.data('column-name'));
+                    })
+                    .click(function(e) {
+                        var $text = $(this).parent().find('text' + byAttr('data-column-name', $(this)));
+
+                        if($text.attr('data-clicked')) {
+                            $text.removeAttr('data-clicked');
+                        }
+                        else {
+                            $text.attr('data-clicked', 1);
+                        }
+                    });
 
                 // Highlight all relations to/from a table when the table name cell is hovered.
-                $doc.find('polygon.table_name, text.table_name').mouseenter(function(e) {
-                    var $node = $(this).parent();
+                $doc.find('polygon.table-name, text.table-name')
+                    .mouseenter(function(e) {
+                        var $node = $(this).parent();
 
-                    // There can be more than one such polygon
-                    $node.addClass('hovered');
+                        $node.addClass('hovered').removeClass('faded');
+                        highlightRelation($doc, $node.data('table-name'));
+                    })
+                    .mouseout(function(e) {
+                        var $node = $(this).parent();
 
-                    var tableName = $node.data('table-name');
-                    $node.find('text.column_name').each(function(i) {
-                        var columnName = $(this).data('column-name');
+                        if($node.hasClass('unwanted')) {
+                            $node.removeClass('hovered');
+                        }
+                        if($node.attr('data-clicked')) {
+                            return;
+                        }
+                        $node.removeClass('hovered');
+                        removeDependentHighlights($doc, $node.data('table-name'));
+                    })
+                    .click(function(e) {
+                        var $node = $(this).parent();
 
-                        $doc.find(getEdgesByTableColumn(tableName, columnName)).each(function(index) {
-                            var $edge = $(this);
-                            $edge.addClass('column_relations');
-                            $edge.appendTo($edge.parent());
-                            addHighlightedBy($edge, tableName);
-
-                            var otherTable = tableName === $edge.data('origin-table') ? $edge.data('destination-table') : $edge.data('origin-table');
-                            var $otherTable = $doc.find('.node[data-table-name="' + otherTable + '"]');
-                            $otherTable.addClass('related_table');
-
-                            $edge.appendTo($edge.parent());
-                        });
-                    });
-                    if($doc.find('.node.related_table').size()) {
-                        $doc.find('.node:not(.related_table):not(.hovered)').addClass('faded');
-                    }
-                });
-                $doc.find('polygon.table_name, text.table_name').mouseout(function(e) {
-                    var $node = $(this).parent();
-                    if($node.data('clicked')) {
-                        return;
-                    }
-
-                    $node.removeClass('hovered');
-                    $doc.find('.edge[data-highlighted-by*="#' + $node.data('table-name') + '#"]').each(function() {
-                        var $el = $(this);
-                        removeHighlightedBy($(this), $node.data('table-name'));
-                        if(!$el.attr('data-highlighted-by').length) {
-                            $el.removeClass('column_relations');
+                        var params = allParams();
+                        if(pressedKeys['shift'] && pressedKeys['ctrl']) {
+                            params['skip_result_sources'] = $node.data('table-name');
+                            window.location = paramToQueryString(params);
+                        }
+                        else if(pressedKeys['shift']) {
+                            params['wanted_result_sources'] = $node.data('table-name');
+                            window.location = paramToQueryString(params);
+                        }
+                        else {
+                            console.log('here');
+                            console.log(pressedKeys);
+                            if(pressedKeys['ctrl']) {
+                                $node.addClass('unwanted');
+                                console.log('  at the wall');
+                            }
+                            if($node.attr('data-clicked')) {
+                                $node.removeAttr('data-clicked');
+                            }
+                            else {
+                                $node.attr('data-clicked', 1);
+                            }
                         }
                     });
-                    $doc.find('.node').removeClass('related_table').removeClass('faded');
-                });
-                $doc.find('polygon.table_name, text.table_name').click(function(e) {
-                    var $node = $(this).parent();
-                    if($node.data('clicked')) {
-                        $node.data('clicked', 0);
-                        $node.removeClass('hovered');
-                    }
-                    else {
-                        $node.data('clicked', 1);
-                    }
-                });
+
+                $doc.find('.node *')
+                    .mouseenter(function() {
+                        $(this).parent().addClass('mouseover').removeClass('faded');
+                    })
+                    .mouseout(function() {
+                        $(this).parent().removeClass('mouseover');
+                    });
 
                 $(document).keyup(function(e) {
                     // escape -> restore
-                    console.log('keuup', e.keyCode);
-                    if(e.keyCode == 27) {
-                        $doc.find('.edge').removeClass('hovered column_relations').data('clicked', 0);
-                        $doc.find('.node').removeClass('hovered related_table').data('clicked', 0);
-                        $doc.find('.text').removeClass('hovered').data('clicked', 0);
+                    if(e.keyCode === 27) {
+                        $doc.find('.edge').removeClass('hovered active').removeAttr('data-clicked');
+                        $doc.find('.node').removeClass('hovered related-table faded').removeAttr('data-clicked');
+                        $doc.find('.node polygon').removeClass('hovered').removeAttr('data-clicked');
+                        $doc.find('text').removeClass('hovered').removeAttr('data-clicked');
+                        $doc.find('[data-highlighted-by]').removeAttr('data-highlighted-by');
+                    }
+                    // r -> zoom to selected tables
+                    else if(isKey(e, 'R')) {
+                        var params = allParams();
+                        var wanted = [];
+                        var skip = params['skip_result_sources'] ? params['skip_result_sources'].split(',') : [];
+
+                        $doc.find('.node.hovered').each(function() {
+                            wanted.push($(this).data('table-name'));
+                        });
+                        $doc.find('.node.unwanted').each(function() {
+                            skip.push($(this).data('table-name'));
+                        })
+
+                        if(wanted.length) {
+                            params['wanted_result_sources'] = wanted.join(',');
+                        }
+                        if(skip.length) {
+                            params['skip_result_sources'] = skip.join(',');
+                        }
+                        window.location = paramToQueryString(params);
+                    }
+                    // q -> back to overall visualization
+                    else if(isKey(e, 'Q')) {
+                        window.location = '?';
+                    }
+                    // 0..9 -> degrees_of_separation
+                    else if((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105)) {
+                        if(pressedKeys['ctrl']) { return }
+                        var params = allParams();
+                        params['degrees_of_separation'] = e.keyCode - (e.keyCode >= 48 && e.keyCode <= 57 ? 48 : 96);
+                        window.location = paramToQueryString(params);
                     }
                 });
+                $(document).keydown(function(e) {
+                    console.log(e);
+                    console.log('keydown:', e.ctrlKey, e.shiftKey);
+                        if(e.ctrlKey) {
+                            pressedKeys['ctrl'] = true;
+                        }
+                        if(e.shiftKey) {
+                            pressedKeys['shift'] = true;
+                        }
+                        console.log('atkeydown:', pressedKeys);
+                    })
+                    .keyup(function(e) {
+                        console.log('keyup:', e.ctrlKey, e.shiftKey);
+                        if(!e.ctrlKey) {
+                            pressedKeys['ctrl'] = false;
+                        }
+                        if(!e.shiftKey) {
+                            pressedKeys['shift'] = false;
+                        }
+                        console.log('atkeyup:', pressedKeys);
+                    });
+
+                if(param('wanted_result_sources')) {
+                    var tableNames = param('wanted_result_sources').split(',');
+                    var findString = tableNames.map(tableName => '.node' + byAttr('data-table-name', tableName) + ' polygon.table-name').join(', ');
+                    console.log(findString);
+                    $(findString).mouseenter().click();
+                }
+
             });
-            // call byAttr('data-column-name', $el)  instead of  '[data-column-name="' + $el.attr('data-column-name') + '"]'
-            function byAttr(attr, $el) {
-                return '[' + attr + '="' + $el.attr(attr) + '"]';
-            }
-            function getEdgesByTableColumn(table, column) {
-                return '.edge[data-origin-table="' + table + '"][data-origin-column="' + column +'"], .edge[data-destination-table="' + table + '"][data-destination-column="' + column +'"]';
+            // call byAttr('data-column-name', $el)     instead of  '[data-column-name="' + $el.attr('data-column-name') + '"]'
+            //   or byAttr('data-column-name', string)  instead of  '[data-column-name="' + string + '"]'
+            function byAttr(attr, thing, operand) {
+                var string = typeof thing === 'object' ? thing.attr(attr) : thing;
+                var operand = operand || '=';
+                return '[' + attr + operand + '"' + string + '"]';
             }
             function addHighlightedBy($el, by) {
                 if($el.attr('data-highlighted-by')) {
@@ -169,71 +214,96 @@
                         var newValue = $el.attr('data-highlighted-by') + '#' + by + '#';
                         $el.attr('data-highlighted-by', newValue);
                     }
-                    else {
-                        console.log($el.attr('data-highlighted-by'), '< apparently matched >', by );
-                    }
                 }
                 else {
                     $el.attr('data-highlighted-by', '#' + by + '#');
                 }
-                console.log('after added highlight by: ', '(' + by + ')', $el.attr('data-highlighted-by'));
             }
-            function removeHighlightedBy($el, by) {
-                $el.attr('data-highlighted-by', $el.attr('data-highlighted-by').replace(new RegExp('#' + by + '#', 'g'), ''));
-                console.log('after removed highlight by:', '(' + by + ')', $el.attr('data-highlighted-by'));
-            }
-            function get_hovered_edge_id($el) {
-                if($el.hasClass('hovered_edge')) {
-                    return '#' + $el.attr('id');
-                }
-                else {
-                    return '#hovered_' + $el.attr('id');
-                }
-            }
-            function get_unhovered_edge_id($el) {
-                var id = $el.attr('id');
-                return '#' + id.replace(/^hovered_/, '');
-            }
-            function set_path_colors($el, color) {
-                $el.find('path').attr({ 'stroke': color });
-                $el.find('polyline').attr({ 'stroke': color, 'fill': color });
-                $el.find('polygon').attr({ 'stroke': color, 'fill': color });
-                $el.find('ellipse').attr({ 'stroke': color });
-            }
-            function possibly_highlight_relation(edge_title, table, column) {
-                var matchFromStart = new RegExp('^' + table + '\.' + column + ' ');
-                var matchFromEnd = new RegExp(' ' + table + '\.' + column + '$');
-
-                var regex;
-                var match;
-                if(edge_title.match(matchFromStart)) {
-                    regex = /^.* ([^.]+)/;
-                }
-                else if (edge_title.match(matchFromEnd)) {
-                    regex = /^([^.]+)/;
-                }
-                else {
-                    return 0;
-                }
-                match = regex.exec(edge_title);
-                if(undefined === match) {
-                    return 0;
-                }
-                var otherTableName = match[1];
-
-                $('text:contains("' + otherTableName + '")').each(function(index) {
-                    var $otherTableTitle = $(this);
-                    // :contains is not enough, it must match exactly
-                    if($otherTableTitle.text() !== otherTableName) {
-                        return 0;
-                    }
-                    $otherTableTitle.parent().addClass('related_table');
+            function removeDependentHighlights($doc, by) {
+                by = '#' + by + '#';
+                $doc.find('.edge' + byAttr('data-highlighted-by', by, '*=')).each(function() {
+                    var $edge = $(this);
+                    _removeHighlightHelper($edge, by);
+                    if(!$edge.attr('data-highlighted-by')) { $edge.removeClass('active'); }
                 });
-                return 1;
+                $doc.find('.node' + byAttr('data-highlighted-by', by, '*=')).each(function() {
+                    var $node = $(this);
+                    _removeHighlightHelper($node, by);
+                    if(!$node.attr('data-highlighted-by')) { $node.removeClass('related-table'); }
+                });
+
+                // Add fadedness to nodes if any other node is a .related-table.
+                // Otherwise, remove fadedness from all.
+                if($doc.find('.node.related-table').length) {
+                    $doc.find('.node:not(.related-table):not(.hovered)').addClass('faded');
+                }
+                else {
+                    $doc.find('.node.faded').removeClass('faded');
+                }
+            }
+            // by must be '#by#'
+            function _removeHighlightHelper($el, by) {
+                $el.attr('data-highlighted-by', $el.attr('data-highlighted-by').replace(new RegExp(by, 'g'), ''));
+                if(!$el.attr('data-highlighted-by')) {
+                    $el.removeAttr('data-highlighted-by');
+                }
+            }
+            function getEdgesByTableColumn(table, column) {
+                return '.edge' + byAttr('data-origin-table', table) + byAttr('data-origin-column', column)
+                   + ', .edge' + byAttr('data-destination-table', table) + byAttr('data-destination-column', column);
+            }
+            function highlightRelation($doc, tableName, columnName) {
+                var byOrigin = byAttr('data-origin-table', tableName);
+                var byDestination = byAttr('data-destination-table', tableName);
+
+                if(undefined !== columnName) {
+                    byOrigin = byOrigin + byAttr('data-origin-column', columnName);
+                    byDestination = byDestination + byAttr('data-destination-column', columnName);
+                }
+                var by = tableName + (columnName !== undefined ? '.'+columnName : '');
+                $doc.find('.edge' + byOrigin + ', .edge' + byDestination).each(function(index) {
+                    var $edge = $(this);
+                    $edge.addClass('active');
+                    $edge.appendTo($edge.parent());
+
+                    var otherTableName = tableName === $edge.data('origin-table') ? $edge.data('destination-table') : $edge.data('origin-table');
+                    var $otherTable = $doc.find('.node' + byAttr('data-table-name', otherTableName));
+
+                    addHighlightedBy($edge, by);
+                    addHighlightedBy($otherTable, by);
+                    $otherTable.addClass('related-table').removeClass('faded');
+                });
+
+                if($doc.find('.node.related-table').size()) {
+                    $doc.find('.node:not(.related-table):not(.hovered):not(mouseover)').addClass('faded');
+                }
+            }
+            function isKey(event, wantedKey) {
+                return wantedKey.charCodeAt() === event.keyCode;
+            }
+            function allParams() {
+                var queryString = {};
+                location.search.substr(1)
+                               .split('&')
+                               .filter(string => string.length)
+                               .map(qs => qs.split('='))
+                               .map(listOfPairs => queryString[listOfPairs[0]] = listOfPairs[1]);
+                return queryString;
+            }
+            function param(key) {
+                var params = allParams();
+                return params[key];
+            }
+            function paramToQueryString(params) {
+                if(undefined === params) {
+                    params = allParams();
+                }
+
+                return '?' + Object.keys(params).map(key => { return [key, params[key]].join('=') }).join('&');
             }
         </script>
     </head>
-    <body>
+    <body data-url-home="<%= url_for 'schema' %>">
         <%= navbar header => ['DbicSchemaViewer', ['#']],
                    container => 'normal',
                    nav => [
