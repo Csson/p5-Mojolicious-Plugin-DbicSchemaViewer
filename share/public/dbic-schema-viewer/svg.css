@@ -82,6 +82,9 @@ svg {
     stroke-width: 1.75;
     stroke: #ff1111;
 }
+.node.unwanted text.table-name {
+    color: #f8f8f8;
+}
 
 .node polygon.column-name.hovered {
     fill: #d8efff;
