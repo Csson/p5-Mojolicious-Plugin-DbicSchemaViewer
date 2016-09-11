@@ -35,17 +35,16 @@ $(document).ready(function() {
     $doc.find('polygon.column-name, text.column-name')
         .mouseenter(function(e) {
             var $selected = $(this);
-
-            var $el = $selected.parent().find('text' + byAttr('data-column-name', $selected));
-            var $polygon = $selected.parent().find('polygon' + byAttr('data-column-name', $selected));
+            var $text = $selected.prop('tagName') === 'text' ? $selected : $selected.siblings(byColumnTextIdFromPolygon($selected));
+            var $polygon = $selected.prop('tagName') === 'polygon' ? $selected : $selected.siblings(byColumnPolygonIdFromText($selected));
 
             $polygon.addClass('hovered');
-            highlightRelation($doc, $el.parent().data('table-name'), $el.data('column-name'));
-            console.log(param('degrees_of_separation'), param('result_sources'));
+            highlightRelation($doc, $text.parent().data('table-name'), $text.data('column-name'));
         })
         .mouseout(function(e) {
-            var $text = $(this).parent().find('text' + byAttr('data-column-name', $(this)));
-            var $polygon = $text.parent().find('polygon' + byAttr('data-column-name', $text));
+            var $selected = $(this);
+            var $text = $selected.prop('tagName') === 'text' ? $selected : $selected.siblings(byColumnTextIdFromPolygon($selected));
+            var $polygon = $selected.prop('tagName') === 'polygon' ? $selected : $selected.siblings(byColumnPolygonIdFromText($selected));
 
             if($text.attr('data-clicked')) {
                 return;
@@ -54,7 +53,7 @@ $(document).ready(function() {
             removeDependentHighlights($doc, $text.parent().data('table-name') + '.' + $text.data('column-name'));
         })
         .click(function(e) {
-            var $text = $(this).parent().find('text' + byAttr('data-column-name', $(this)));
+            var $text = $(this).prop('tagName') === 'text' ? $(this) : $(this).siblings(byColumnTextIdFromPolygon($(this)));
 
             if($text.attr('data-clicked')) {
                 $text.removeAttr('data-clicked');
@@ -131,7 +130,7 @@ $(document).ready(function() {
         // escape -> restore
         if(e.keyCode === 27) {
             $doc.find('.edge').removeClass('hovered active').removeAttr('data-clicked');
-            $doc.find('.node').removeClass('hovered related-table faded').removeAttr('data-clicked');
+            $doc.find('.node').removeClass('hovered related-table faded unwanted').removeAttr('data-clicked');
             $doc.find('.node polygon').removeClass('hovered').removeAttr('data-clicked');
             $doc.find('text').removeClass('hovered').removeAttr('data-clicked');
             $doc.find('[data-highlighted-by]').removeAttr('data-highlighted-by');
@@ -162,39 +161,43 @@ $(document).ready(function() {
             window.location = '?';
         }
         // 0..9 -> degrees_of_separation
-        else if((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105)) {
-            if(pressedKeys['ctrl']) { return }
+        else if(e.keyCode >= 48 && e.keyCode <= 57) {
+            e.preventDefault();
             var params = allParams();
-            params['degrees_of_separation'] = e.keyCode - (e.keyCode >= 48 && e.keyCode <= 57 ? 48 : 96);
+            var degrees = e.keyCode - 48;
+
+            if(pressedKeys['shift']) {
+                degrees += 10;
+            }
+            if(pressedKeys['ctrl']) {
+                degrees += 20;
+            }
+            params['degrees_of_separation'] = degrees;
             window.location = paramToQueryString(params);
         }
     });
+
+    // remember shift/ctrl status
     $(document).keydown(function(e) {
-        console.log(e);
-        console.log('keydown:', e.ctrlKey, e.shiftKey);
             if(e.ctrlKey) {
                 pressedKeys['ctrl'] = true;
             }
             if(e.shiftKey) {
                 pressedKeys['shift'] = true;
             }
-            console.log('atkeydown:', pressedKeys);
         })
         .keyup(function(e) {
-            console.log('keyup:', e.ctrlKey, e.shiftKey);
             if(!e.ctrlKey) {
                 pressedKeys['ctrl'] = false;
             }
             if(!e.shiftKey) {
                 pressedKeys['shift'] = false;
             }
-            console.log('atkeyup:', pressedKeys);
         });
 
     if(param('wanted_result_source_names')) {
         var tableNames = param('wanted_result_source_names').split(',');
         var findString = tableNames.map(tableName => '.node' + byAttr('data-table-name', tableName) + ' polygon.table-name').join(', ');
-        console.log(findString);
         $(findString).mouseenter().click();
     }
 
@@ -206,6 +209,16 @@ function byAttr(attr, thing, operand) {
     var operand = operand || '=';
     return '[' + attr + operand + '"' + string + '"]';
 }
+
+// polygon.column-name has id 'bg-column-%s'
+// text.column-name    has id 'column-%s'
+function byColumnTextIdFromPolygon($polygon) {
+    return '#' + $polygon.attr('id').replace(/^bg-/, '');
+}
+function byColumnPolygonIdFromText($text) {
+    return '#bg-' + $text.attr('id');
+}
+
 function addHighlightedBy($el, by) {
     if($el.attr('data-highlighted-by')) {
         var currentvalue = $el.attr('data-highlighted-by');
