@@ -8,12 +8,13 @@
         <script src="/dbic-schema-viewer/svg.js"></script>
     </head>
     <body data-url-home="<%= url_for 'schema' %>">
-        <%= navbar header => ['DbicSchemaViewer', ['#']],
+        <%= navbar header => ['DbicSchemaViewer', ['#'], hamburger],
                    container => 'normal',
                    nav => [
                     items => [
-                        ['Overview', ['schema']],
-                        ['Visualized', ['visualizer']]
+                        ['Overview', [url_for('home')->query(schema => $c->param('schema'))]],
+                        ['Visualized', [url_for('visualizer')->query(schema => $c->param('schema'))]],
+                        ['Schemas', ['#'], caret, items => [map { [$_, [url_for->query(schema => $_)] ] } (sort keys %{ $all_schemas }) ] ],
                     ],
                    ]
         %>

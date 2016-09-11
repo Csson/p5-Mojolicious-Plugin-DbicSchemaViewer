@@ -14,9 +14,13 @@ use Data::Dump::Streamer;
 use Safe::Isa;
 use DateTime::Tiny;
 use PerlX::Maybe qw/maybe provided/;
+use List::Util qw/none/;
+use DBIx::Class::Visualizer;
 
 use experimental qw/signatures postderef/;
 
+has schemas => sub { +{} };
+has allowed_schemas => sub { [] };
 sub register($self, $app, $conf) {
     $app->plugin('BootstrapHelpers');
 
@@ -49,7 +53,6 @@ sub register($self, $app, $conf) {
     my $url = $conf->{'url'} || 'dbic-schema-viewer';
     my $schema = $conf->{'schema'};
 
-    my $can_show_visualizer = eval { require DBIx::Class::Visualizer; 1; };
 
     push @{ $app->static->paths }, path(dist_dir('Mojolicious-Plugin-DbicSchemaViewer'))->child('public')->stringify;
 
@@ -77,7 +80,6 @@ sub register($self, $app, $conf) {
 
         $self->render($c, 'viewer/visualizer',
             schema_name => ref $schema,
-            can_show_visualizer => $can_show_visualizer,
             svg => DBIx::Class::Visualizer->new(
                       schema => $schema,
                       %wanted_result_source_names,

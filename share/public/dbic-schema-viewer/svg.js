@@ -158,7 +158,7 @@ $(document).ready(function() {
         }
         // q -> back to overall visualization
         else if(isKey(e, 'Q')) {
-            window.location = '?';
+            window.location = '?schema=' + param('schema');
         }
         // 0..9 -> degrees_of_separation
         else if(e.keyCode >= 48 && e.keyCode <= 57) {

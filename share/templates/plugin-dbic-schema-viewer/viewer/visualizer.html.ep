@@ -1,8 +1,2 @@
-%   if($can_show_visualizer) {
-        % $svg =~ s{^.*<svg }{<svg }s;
-        <%== $svg %>
-
-%   }
-%   else {
-        <div class="container"><p>Requires <a href="http://https://metacpan.org/release/DBIx-Class-Visualizer">DBIx::Class::Visualizer</a>.</p></div>
-%   }
+% $svg =~ s{^.*<svg }{<svg }s;
+<%== $svg %>

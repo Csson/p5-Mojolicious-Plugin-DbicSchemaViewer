@@ -1,0 +1,10 @@
+<div class="container">
+    <p>Could not use the supplied 'schema' as a DBIx::Class schema. Reasons include:</p>
+    <ul>
+        <li>The schema is not in PERL5LIB</li>
+        <li>It is not a DBIx::Class schema</li>
+        <li>The name is misspelled.</li>
+    </ul>
+
+    <p>See the log file for more information.</p>
+</div>
