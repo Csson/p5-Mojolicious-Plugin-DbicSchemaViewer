@@ -13,6 +13,7 @@ use Path::Tiny;
 use Data::Dump::Streamer;
 use Safe::Isa;
 use DateTime::Tiny;
+use PerlX::Maybe qw/maybe provided/;
 
 use experimental qw/signatures postderef/;
 
@@ -50,20 +51,41 @@ sub register($self, $app, $conf) {
 
     my $can_show_visualizer = eval { require DBIx::Class::Visualizer; 1; };
 
+    push @{ $app->static->paths }, path(dist_dir('Mojolicious-Plugin-DbicSchemaViewer'))->child('public')->stringify;
 
     my $base = $router->get($url);
     $base->get('/')->to(cb => sub ($c) {
         $self->render($c, 'viewer/schema', db => $self->schema_info($schema), schema_name => ref $schema);
     })->name('schema');
+
     $base->get('visualizer')->to(cb => sub ($c) {
-        $self->render($c, 'viewer/visualizer', schema_name => ref $schema, can_show_visualizer => $can_show_visualizer, svg => DBIx::Class::Visualizer->new(schema => $schema)->svg);
+        my(%wanted_result_source_names, %skip_result_source_names);
+
+        if($c->param('wanted_result_source_names')) {
+            my $wanted_result_source_names = [split /,/ => $c->param('wanted_result_source_names')];
+            %wanted_result_source_names = scalar $wanted_result_source_names->@* ? (wanted_result_source_names => $wanted_result_source_names) : ();
+        }
+        if($c->param('skip_result_source_names')) {
+            my $skip_result_source_names = [split /,/ => $c->param('skip_result_source_names')];
+            %skip_result_source_names = scalar $skip_result_source_names->@* ? (skip_result_source_names => $skip_result_source_names) : ();
+        }
+
+        my %args = (schema => $schema,
+                      %wanted_result_source_names,
+                      %skip_result_source_names,
+                maybe degrees_of_separation => $c->param('degrees_of_separation'));
+
+        $self->render($c, 'viewer/visualizer',
+            schema_name => ref $schema,
+            can_show_visualizer => $can_show_visualizer,
+            svg => DBIx::Class::Visualizer->new(
+                      schema => $schema,
+                      %wanted_result_source_names,
+                      %skip_result_source_names,
+                maybe degrees_of_separation => $c->param('degrees_of_separation'),
+            )->svg
+        );
     })->name('visualizer');
-    $base->get('/visualizer/svg')->to(cb => sub ($c) {
-        $c->render(data => DBIx::Class::Visualizer->new(schema => $schema)->svg);
-    })->name('visualizer_svg');
-    $base->get('/svg.css')->to(cb => sub ($c) {
-        $c->render(format => 'css', data => path(dist_dir('Mojolicious-Plugin-DbicSchemaViewer'))->child('other/svg.css')->slurp);
-    })->name('svg_css');
 }
 
 sub render($self, $c, $template, @args) {
