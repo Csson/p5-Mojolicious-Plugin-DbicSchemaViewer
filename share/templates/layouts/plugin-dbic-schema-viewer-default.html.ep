@@ -77,8 +77,10 @@
                     .mouseenter(function(e) {
                         var $node = $(this).parent();
 
-                        $node.addClass('hovered').removeClass('faded');
-                        highlightRelation($doc, $node.data('table-name'));
+                        if(!$node.hasClass('unwanted')) {
+                            $node.addClass('hovered').removeClass('faded');
+                            highlightRelation($doc, $node.data('table-name'));
+                        }
                     })
                     .mouseout(function(e) {
                         var $node = $(this).parent();
@@ -97,28 +99,33 @@
 
                         var params = allParams();
                         if(pressedKeys['shift'] && pressedKeys['ctrl']) {
-                            params['skip_result_sources'] = $node.data('table-name');
+                            var skip = params['skip_result_source_names'] ? params['skip_result_source_names'].split(',') : [];
+                            skip.push($node.data('table-name'));
+                            params['skip_result_source_names'] = skip.join(',');
+
+                            //params['skip_result_source_names'] = $node.data('table-name');
                             window.location = paramToQueryString(params);
                         }
                         else if(pressedKeys['shift']) {
-                            params['wanted_result_sources'] = $node.data('table-name');
+                            params['wanted_result_source_names'] = $node.data('table-name');
                             window.location = paramToQueryString(params);
                         }
-                        else {
-                            console.log('here');
-                            console.log(pressedKeys);
-                            if(pressedKeys['ctrl']) {
-                                $node.addClass('unwanted');
-                                console.log('  at the wall');
-                            }
-                            if($node.attr('data-clicked')) {
-                                $node.removeAttr('data-clicked');
-                            }
-                            else {
-                                $node.attr('data-clicked', 1);
-                            }
+
+                        if($node.attr('data-clicked')) {
+                            $node.removeAttr('data-clicked');
                         }
-                    });
+                        else {
+                            $node.attr('data-clicked', 1);
+                        }
+                        if(pressedKeys['ctrl'] && $node.attr('data-clicked')) {
+                            $node.addClass('unwanted').removeClass('hovered');
+                            removeDependentHighlights($doc, $node.data('table-name'));
+                        }
+                        else {
+                                $node.removeClass('unwanted');
+                                highlightRelation($doc, $node.data('table-name'));
+                        }
+                });
 
                 $doc.find('.node *')
                     .mouseenter(function() {
@@ -141,7 +148,7 @@
                     else if(isKey(e, 'R')) {
                         var params = allParams();
                         var wanted = [];
-                        var skip = params['skip_result_sources'] ? params['skip_result_sources'].split(',') : [];
+                        var skip = params['skip_result_source_names'] ? params['skip_result_source_names'].split(',') : [];
 
                         $doc.find('.node.hovered').each(function() {
                             wanted.push($(this).data('table-name'));
@@ -151,10 +158,10 @@
                         })
 
                         if(wanted.length) {
-                            params['wanted_result_sources'] = wanted.join(',');
+                            params['wanted_result_source_names'] = wanted.join(',');
                         }
                         if(skip.length) {
-                            params['skip_result_sources'] = skip.join(',');
+                            params['skip_result_source_names'] = skip.join(',');
                         }
                         window.location = paramToQueryString(params);
                     }
@@ -192,8 +199,8 @@
                         console.log('atkeyup:', pressedKeys);
                     });
 
-                if(param('wanted_result_sources')) {
-                    var tableNames = param('wanted_result_sources').split(',');
+                if(param('wanted_result_source_names')) {
+                    var tableNames = param('wanted_result_source_names').split(',');
                     var findString = tableNames.map(tableName => '.node' + byAttr('data-table-name', tableName) + ' polygon.table-name').join(', ');
                     console.log(findString);
                     $(findString).mouseenter().click();
@@ -235,7 +242,7 @@
                 // Add fadedness to nodes if any other node is a .related-table.
                 // Otherwise, remove fadedness from all.
                 if($doc.find('.node.related-table').length) {
-                    $doc.find('.node:not(.related-table):not(.hovered)').addClass('faded');
+                    $doc.find('.node:not(.related-table):not(.hovered):not(.unwanted)').addClass('faded');
                 }
                 else {
                     $doc.find('.node.faded').removeClass('faded');
@@ -275,7 +282,7 @@
                 });
 
                 if($doc.find('.node.related-table').size()) {
-                    $doc.find('.node:not(.related-table):not(.hovered):not(mouseover)').addClass('faded');
+                    $doc.find('.node:not(.related-table):not(.hovered):not(mouseover):not(.unwanted)').addClass('faded');
                 }
             }
             function isKey(event, wantedKey) {
