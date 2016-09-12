@@ -8,7 +8,7 @@ package Mojolicious::Plugin::DbicSchemaViewer;
 our $VERSION = '0.0103';
 
 use Mojo::Base 'Mojolicious::Plugin';
-use File::ShareDir::Tarball 'dist_dir';
+use File::ShareDir 'dist_dir';
 use Path::Tiny;
 use Data::Dump::Streamer;
 use Safe::Isa;

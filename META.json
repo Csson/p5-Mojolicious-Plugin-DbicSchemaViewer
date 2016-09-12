@@ -76,7 +76,7 @@
             "Dist::Zilla::Plugin::ReadmeAnyFromPod" : "0.150250",
             "Dist::Zilla::Plugin::RewriteVersion::Transitional" : "0.007",
             "Dist::Zilla::Plugin::RunExtraTests" : "0.028",
-            "Dist::Zilla::Plugin::ShareDir::Tarball" : "0",
+            "Dist::Zilla::Plugin::ShareDir" : "0",
             "Dist::Zilla::Plugin::Test::Compile" : "2.054",
             "Dist::Zilla::Plugin::Test::EOF" : "0.0501",
             "Dist::Zilla::Plugin::Test::EOL" : "0.18",
@@ -116,12 +116,14 @@
       },
       "runtime" : {
          "requires" : {
+            "DBIx::Class::Visualizer" : "0",
             "Data::Dump::Streamer" : "0",
             "DateTime::Tiny" : "1.06",
             "File::ShareDir::Tarball" : "0",
             "Mojolicious" : "6.00",
             "Mojolicious::Plugin::BootstrapHelpers" : "0.0201",
             "Path::Tiny" : "0.072",
+            "PerlX::Maybe" : "1.001",
             "Safe::Isa" : "1.000005",
             "experimental" : "0",
             "perl" : "5.020000"
@@ -574,9 +576,9 @@
             "version" : "0.029"
          },
          {
-            "class" : "Dist::Zilla::Plugin::ShareDir::Tarball",
-            "name" : "ShareDir::Tarball",
-            "version" : "0.6.0"
+            "class" : "Dist::Zilla::Plugin::ShareDir",
+            "name" : "ShareDir",
+            "version" : "6.007"
          },
          {
             "class" : "Dist::Zilla::Plugin::ExecDir",

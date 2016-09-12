@@ -16,6 +16,8 @@ prereqs:
      - experimental
      - DateTime::Tiny: 1.06
      - Mojolicious::Plugin::BootstrapHelpers: 0.0201
+     - DBIx::Class::Visualizer
+     - PerlX::Maybe
     recommended:
      - DBIx::Class::Visualizer: 0.0100
 
@@ -32,8 +34,8 @@ plugins:
   - +extend_plugin: TravisYML
     perl_version: 5.20
 
-  - +replace_plugin: ShareDir
-    +with: ShareDir::Tarball
+#  - +replace_plugin: ShareDir
+#    +with: ShareDir::Tarball
 
 ---
 doctype: weaver
