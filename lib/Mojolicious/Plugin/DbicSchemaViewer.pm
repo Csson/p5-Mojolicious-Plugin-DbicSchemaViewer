@@ -47,6 +47,7 @@ sub register($self, $app, $conf) {
 
     if($template_dir->is_dir) {
         push $app->renderer->paths->@* => $template_dir->realpath;
+        $app->log->debug(sprintf '[M::P::DbicSchemaViewer] Adds %s to renderer paths', $template_dir->stringify);
     }
 
     my $router = exists $conf->{'router'}    ?  $conf->{'router'}
@@ -68,7 +69,7 @@ sub register($self, $app, $conf) {
 
         $c->redirect_to('error') && return if !defined $schema;
 
-        $self->render($c, 'viewer/schema', db => $self->schema_info($schema), schema_name => ref $schema);
+        $self->render($c, 'schema', db => $self->schema_info($schema), schema_name => ref $schema);
     })->name('home');
 
     # visualizer
@@ -87,7 +88,7 @@ sub register($self, $app, $conf) {
             %skip_result_source_names = scalar $skip_result_source_names->@* ? (skip_result_source_names => $skip_result_source_names) : ();
         }
 
-        $self->render($c, 'viewer/visualizer',
+        $self->render($c, 'visualizer',
             schema_name => ref $schema,
             svg => DBIx::Class::Visualizer->new(
                       schema => $schema,
@@ -100,14 +101,14 @@ sub register($self, $app, $conf) {
 
     # error
     $base->get('error')->to(cb => sub ($c) {
-        $self->render($c, 'viewer/error', schema_name => 'Error');
+        $self->render($c, 'error', schema_name => 'Error');
     })->name('error');
 
 }
 
 sub render($self, $c, $template, @args) {
     my %layout = (layout => 'plugin-dbic-schema-viewer-default');
-    $c->render(%layout, template => $template, @args, all_schemas => $self->schemas);
+    $c->render(%layout, template => "viewer/$template", @args, all_schemas => $self->schemas);
 }
 
 sub get_schema {
