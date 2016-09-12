@@ -94,7 +94,7 @@ sub register($self, $app, $conf) {
                       %wanted_result_source_names,
                       %skip_result_source_names,
                 maybe degrees_of_separation => $c->param('degrees_of_separation'),
-            )->transformed_svg
+            )->svg
         );
     })->name('visualizer');
 
