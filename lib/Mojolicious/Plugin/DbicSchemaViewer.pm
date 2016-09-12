@@ -69,7 +69,7 @@ sub register($self, $app, $conf) {
         $c->redirect_to('error') && return if !defined $schema;
 
         $self->render($c, 'viewer/schema', db => $self->schema_info($schema), schema_name => ref $schema);
-    })->name('schema');
+    })->name('home');
 
     # visualizer
     $base->get('visualizer')->to(cb => sub ($c) {
@@ -87,11 +87,6 @@ sub register($self, $app, $conf) {
             %skip_result_source_names = scalar $skip_result_source_names->@* ? (skip_result_source_names => $skip_result_source_names) : ();
         }
 
-        my %args = (schema => $schema,
-                      %wanted_result_source_names,
-                      %skip_result_source_names,
-                maybe degrees_of_separation => $c->param('degrees_of_separation'));
-
         $self->render($c, 'viewer/visualizer',
             schema_name => ref $schema,
             svg => DBIx::Class::Visualizer->new(
@@ -99,7 +94,7 @@ sub register($self, $app, $conf) {
                       %wanted_result_source_names,
                       %skip_result_source_names,
                 maybe degrees_of_separation => $c->param('degrees_of_separation'),
-            )->svg
+            )->transformed_svg
         );
     })->name('visualizer');
 
@@ -112,7 +107,7 @@ sub register($self, $app, $conf) {
 
 sub render($self, $c, $template, @args) {
     my %layout = (layout => 'plugin-dbic-schema-viewer-default');
-    $c->render(%layout, template => join ('/' => ('plugin-dbic-schema-viewer', $template)), @args);
+    $c->render(%layout, template => join ('/' => ('plugin-dbic-schema-viewer', $template)), @args, all_schemas => $self->schemas);
 }
 
 sub get_schema {
@@ -247,10 +242,6 @@ sub schema_info($self, $schema) {
         push $db->{'sources'}->@* => $source;
     }
     return $db;
-}
-
-sub visualizer($self, $schema) {
-    ;
 }
 
 1;
