@@ -7,18 +7,18 @@ use Test::Deep;
 use Mojolicious::Lite;
 
 use lib 't/lib';
-use TestFor::MPDbicSchemaViewer::Schema;
+use TestFor::DbicVisualizer::Schema;
 
-my $schema = TestFor::MPDbicSchemaViewer::Schema->connect;
+my $schema = 'TestFor::DbicVisualizer::Schema';
 
-plugin 'DbicSchemaViewer' => { schema => $schema };
+plugin 'DbicSchemaViewer';
 
 my $t = Test::Mojo->new;
 
-$t->get_ok('/dbic-schema-viewer')->status_is(200);
-my $tok = $t->get_ok('/dbic-schema-viewer')->status_is(200);
+$t->get_ok("/dbic-schema-viewer?schema=$schema")->status_is(200);
+my $tok = $t->get_ok("/dbic-schema-viewer?schema=$schema")->status_is(200);
 
-$tok->content_like(qr/for TestFor::MPDbicSchemaViewer::Schema/);
+$tok->content_like(qr/for TestFor::DbicVisualizer::Schema/);
 $tok->content_like(qr/missing reverse/i);
 
 done_testing;
