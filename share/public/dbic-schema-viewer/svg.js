@@ -127,8 +127,8 @@ $(document).ready(function() {
         });
 
     $(document).keyup(function(e) {
-        // escape -> restore
-        if(e.keyCode === 27) {
+        // escape -> restore (but only if the #help-modal isn't opened)
+        if(e.keyCode === 27 && $('#help-modal').css('display') === 'none') {
             $doc.find('.edge').removeClass('hovered active').removeAttr('data-clicked');
             $doc.find('.node').removeClass('hovered related-table faded unwanted').removeAttr('data-clicked');
             $doc.find('.node polygon').removeClass('hovered').removeAttr('data-clicked');

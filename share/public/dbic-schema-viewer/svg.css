@@ -1,3 +1,10 @@
+.modal-dialog {
+    width: 930px;
+}
+.modal-dialog tr th:first-child {
+    width: 240px;
+}
+
 svg {
     display: block;
     margin-left: auto;
