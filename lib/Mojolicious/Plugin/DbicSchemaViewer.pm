@@ -107,7 +107,7 @@ sub register($self, $app, $conf) {
 
 sub render($self, $c, $template, @args) {
     my %layout = (layout => 'plugin-dbic-schema-viewer-default');
-    $c->render(%layout, template => join ('/' => ('plugin-dbic-schema-viewer', $template)), @args, all_schemas => $self->schemas);
+    $c->render(%layout, template => $template, @args, all_schemas => $self->schemas);
 }
 
 sub get_schema {
