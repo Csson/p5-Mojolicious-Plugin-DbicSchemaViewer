@@ -119,7 +119,7 @@ sub get_schema {
     my $schema;
     if($c->param('schema')) {
         if(scalar $self->allowed_schemas->@* && (none { $c->param('schema') eq $_ } $self->allowed_schemas->@*)) {
-            $app->log->fatal($c->param('schema') . ' is not in the list of allowed schemas');
+            $app->log->warn($c->param('schema') . ' is not in the list of allowed schemas');
         }
         if(exists $self->schemas->{ $c->param('schema') }) {
             return $self->schemas->{ $c->param('schema') };
@@ -128,11 +128,11 @@ sub get_schema {
             $schema = ($c->param('schema'))->connect;
         }
         else {
-            $app->log->fatal("Could not load @{[ $c->param('schema') ]}");
+            $app->log->warn("Could not load @{[ $c->param('schema') ]}");
         }
     }
     else {
-        $app->log->fatal(q{M::P::DbicSchemaViewer is missing mandatory 'schema' parameter.});
+        $app->log->warn(q{M::P::DbicSchemaViewer is missing mandatory 'schema' parameter.});
         return;
     }
 
@@ -140,9 +140,7 @@ sub get_schema {
         $self->schemas->{ $c->param('schema') } = $schema;
     }
     else {
-        my $exception = "'schema' must be an DBIx::Class::Schema instance in M::P::DbicSchemaViewer, @{[ $c->param('schema') ]} is not";
-        $app->log->fatal($exception);
-        $app->reply->exception($exception);
+        $app->log->warn("'schema' must be an DBIx::Class::Schema instance in M::P::DbicSchemaViewer, @{[ $c->param('schema') ]} is not");
         return;
     }
     return $schema;
