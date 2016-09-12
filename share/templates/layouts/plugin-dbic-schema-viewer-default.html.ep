@@ -5,18 +5,23 @@
         <title>DbicSchemaViewer - <%= $schema_name %></title>
         %= bootstrap 'allq'
         <link rel="stylesheet" href="/dbic-schema-viewer/svg.css" type="text/css" />
-        <script src="/dbic-schema-viewer/svg.js"></script>
     </head>
     <body data-url-home="<%= url_for 'schema' %>">
-        <%= navbar header => ['DbicSchemaViewer', ['#'], hamburger],
-                   container => 'normal',
-                   nav => [
-                    items => [
-                        ['Overview', [url_for('home')->query(schema => $c->param('schema'))]],
-                        ['Visualized', [url_for('visualizer')->query(schema => $c->param('schema'))]],
-                        ['Schemas', ['#'], caret, items => [map { [$_, [url_for->query(schema => $_)] ] } (sort keys %{ $all_schemas }) ] ],
+        <%= navbar  header => ['DbicSchemaViewer', ['#'], hamburger],
+                    container => 'normal',
+                    nav => [
+                        items => [
+                            ['Overview', [url_for('home')->query(schema => $c->param('schema'))]],
+                            ['Visualized', [url_for('visualizer')->query(schema => $c->param('schema'))]],
+                            ['Schemas', ['#'], caret, items => [map { [$_, [url_for(current_route('error') ? 'home' : current_route)->query(schema => $_)] ] } (sort keys %{ $all_schemas }) ] ],
+                        ],
                     ],
-                   ]
+                    nav => [
+                        right,
+                        items => [
+                            ['Help', ['#'], id => 'help-opener', data => { toggle => 'modal', target => '#help-modal' } ],
+                        ],
+                    ],
         %>
         <%= content %>
     </body>
