@@ -102,6 +102,12 @@ sub register($self, $app, $conf) {
             )->svg
         );
     })->name('visualizer');
+
+    # error
+    $base->get('error')->to(cb => sub ($c) {
+        $self->render($c, 'viewer/error', schema_name => 'Error');
+    })->name('error');
+
 }
 
 sub render($self, $c, $template, @args) {
