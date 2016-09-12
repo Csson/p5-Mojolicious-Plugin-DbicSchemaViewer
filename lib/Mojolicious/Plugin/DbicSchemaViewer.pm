@@ -225,6 +225,13 @@ sub schema_info($self, $schema) {
 
             my $on_cascade = [ sort map { $_ =~ s{^cascade_}{}rm } grep { m/^cascade/ && $relation->{'attrs'}{ $_ } } keys $relation->{'attrs'}->%* ];
 
+            # do not reorder
+            my $relation_type = $relation->{'attrs'}{'accessor'} eq 'multi' ? 'has_many'
+                              : $relation->{'attrs'}{'is_depends_on'}       ? 'belongs_to'
+                              : exists $relation->{'attrs'}{'join_type'}    ? 'might_have'
+                              :                                               'has_one'
+                              ;
+
             push $source->{'relationships'}->@* => {
                 name => $relation_name,
                 class_name => $class_name,
@@ -232,6 +239,7 @@ sub schema_info($self, $schema) {
                 condition => $condition,
                 on_cascade => $on_cascade,
                 $relation->%*,
+                relation_type => $relation_type,
                 has_reverse_relation => keys $rs->reverse_relationship_info($relation_name)->%* ? 1 : 0,
             };
         }
