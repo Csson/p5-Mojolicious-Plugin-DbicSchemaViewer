@@ -64,7 +64,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Class</th>
-                        <th>Accessor</th>
+                        <th>Relation type</th>
                         <th style="white-space: nowrap;">Cascade on</th>
                         <th>Condition</th>
                     </tr>
@@ -75,7 +75,7 @@
                     <tr>
                         <td><%== $relation->{'has_reverse_relation'} ? '' : '<span class="alert-danger">Missing reverse relation</span> ' %><a href="#rc-<%= $relation->{'clean_name'} %>"><%= $relation->{'name'} %></a></td>
                         <td><%= $relation->{'class_name'} %></td>
-                        <td><%= $attrs->{'accessor'} %></td>
+                        <td><%= $relation->{'relation_type'} %></td>
                         <td><%= join ', ' => $relation->{'on_cascade'}->@* %></td>
                         <td><pre><%= $relation->{'condition'} %></pre></td>
                     </tr>
@@ -88,3 +88,19 @@
 
     <p>Powered by <a href="https://metacpan.org/pod/Mojolicious::Plugin::DbicSchemaViewer">Mojolicious::Plugin::DbicSchemaViewer</a></p>
 </div>
+<div class="modal fade" id="help-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title" id="help-title">Help</h3>
+            </div>
+            <div class="modal-body">No help written.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/dbic-schema-viewer/svg.js"></script>
