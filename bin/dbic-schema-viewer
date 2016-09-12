@@ -2,6 +2,48 @@ use 5.10.1;
 use strict;
 use warnings;
 
-use Mojolicious::Lite;
+# ABSTRACT: Example application
+# AUTHORITY
+# PODNAME: dbic-schema-viewer
+our $VERSION = '0.0103';
 
-plugin 'DbicSchemaViewer';
+use Mojolicious::Lite;
+use File::HomeDir;
+use Path::Tiny;
+use syntax 'qi';
+use String::Stomp;
+use String::Random;
+
+my $confdir = path(File::HomeDir->my_dist_data('Mojolicious-Plugin-DbicSchemaViewer', { create => 1 }));
+
+my $exists = $confdir->exists && $confdir->is_dir ? 1 : 0;
+
+app->log->debug("[dbic-schema-viewer] Looking for config in $confdir/dbic-schema-viewer.conf ...");
+
+my $confile = $confdir->child('dbic-schema-viewer.conf');
+
+# setup config file if it doesn't exist
+if(!$confile->exists) {
+    app->log->debug('[dbic-schema-viewer] Setting up config file at ' . $confile->stringify);
+    my $secret = String::Random->new->randpattern('s' x 20);
+    $confile->spew(stomp qi!
+        {
+            dbic_schema_viewer => {
+                # allowed_schemas => [qw//],
+                # router => ...,
+                # condition => ...
+                # url => 'dbic-schema-viewer',
+            },
+            secrets => [qw/! . $secret . qi!/],
+        };!);
+}
+plugin 'Config', { file => $confdir->child('dbic-schema-viewer.conf')->stringify };
+
+if(exists app->config->{'secrets'}) {
+    app->secrets(app->config->{'secrets'});
+}
+
+app->config->{'dbic-schema-viewer'}{'url'} = '/' if !exists app->config->{'dbic-schema-viewer'}{'url'};
+plugin 'DbicSchemaViewer', app->config->{'dbic_schema_viewer'};
+
+app->start;
