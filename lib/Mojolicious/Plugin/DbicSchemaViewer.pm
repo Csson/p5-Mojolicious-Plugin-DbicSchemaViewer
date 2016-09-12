@@ -13,7 +13,7 @@ use Path::Tiny;
 use Data::Dump::Streamer;
 use Safe::Isa;
 use DateTime::Tiny;
-use PerlX::Maybe qw/maybe provided/;
+use PerlX::Maybe;
 use List::Util qw/none/;
 use DBIx::Class::Visualizer;
 
@@ -21,23 +21,27 @@ use experimental qw/signatures postderef/;
 
 has schemas => sub { +{} };
 has allowed_schemas => sub { [] };
+
 sub register($self, $app, $conf) {
     $app->plugin('BootstrapHelpers');
 
-    # check configuration
+    # Check configuration
     if(exists $conf->{'router'} && exists $conf->{'condition'}) {
         my $exception = "Can't use both 'router' and 'condition' in M::P::DbicSchemaViewer";
         $app->log->fatal($exception);
         $app->reply->exception($exception);
         return;
     }
-    if(!exists $conf->{'schema'} || !$conf->{'schema'}->$_isa('DBIx::Class::Schema')) {
-        my $exception = "'schema' must be an DBIx::Class::Schema instance in M::P::DbicSchemaViewer";
-        $app->log->fatal($exception);
-        $app->reply->exception($exception);
-        return;
-    }
+    # Preload all (if any) allowed schemas
+    if(exists $conf->{'allowed_schemas'} && scalar $conf->{'allowed_schemas'}->@*) {
+        $self->allowed_schemas->@* = $conf->{'allowed_schemas'}->@*;
 
+        for my $allowed ($self->allowed_schemas->@*) {
+            if(eval "require $allowed") {
+                $self->schemas->{ $allowed } = $allowed->connect;
+            }
+        }
+    }
     # add our template directory
     my $template_dir = path(dist_dir('Mojolicious-Plugin-DbicSchemaViewer'))->child('templates');
 
@@ -51,17 +55,27 @@ sub register($self, $app, $conf) {
                ;
 
     my $url = $conf->{'url'} || 'dbic-schema-viewer';
-    my $schema = $conf->{'schema'};
-
 
     push @{ $app->static->paths }, path(dist_dir('Mojolicious-Plugin-DbicSchemaViewer'))->child('public')->stringify;
 
+
+    # Routes
     my $base = $router->get($url);
+
+    # home / schema
     $base->get('/')->to(cb => sub ($c) {
+        my $schema = $self->get_schema($app, $c);
+
+        $c->redirect_to('error') && return if !defined $schema;
+
         $self->render($c, 'viewer/schema', db => $self->schema_info($schema), schema_name => ref $schema);
     })->name('schema');
 
+    # visualizer
     $base->get('visualizer')->to(cb => sub ($c) {
+        my $schema = $self->get_schema($app, $c);
+        $c->redirect_to('error') && return if !defined $schema;
+
         my(%wanted_result_source_names, %skip_result_source_names);
 
         if($c->param('wanted_result_source_names')) {
@@ -95,6 +109,42 @@ sub render($self, $c, $template, @args) {
     $c->render(%layout, template => join ('/' => ('plugin-dbic-schema-viewer', $template)), @args);
 }
 
+sub get_schema {
+    my $self = shift;
+    my $app = shift;
+    my $c = shift;
+
+    my $schema;
+    if($c->param('schema')) {
+        if(scalar $self->allowed_schemas->@* && (none { $c->param('schema') eq $_ } $self->allowed_schemas->@*)) {
+            $app->log->fatal($c->param('schema') . ' is not in the list of allowed schemas');
+        }
+        if(exists $self->schemas->{ $c->param('schema') }) {
+            return $self->schemas->{ $c->param('schema') };
+        }
+        elsif(eval "require @{[ $c->param('schema') ]}") {
+            $schema = ($c->param('schema'))->connect;
+        }
+        else {
+            $app->log->fatal("Could not load @{[ $c->param('schema') ]}");
+        }
+    }
+    else {
+        $app->log->fatal(q{M::P::DbicSchemaViewer is missing mandatory 'schema' parameter.});
+        return;
+    }
+
+    if($schema->$_isa('DBIx::Class::Schema')) {
+        $self->schemas->{ $c->param('schema') } = $schema;
+    }
+    else {
+        my $exception = "'schema' must be an DBIx::Class::Schema instance in M::P::DbicSchemaViewer, @{[ $c->param('schema') ]} is not";
+        $app->log->fatal($exception);
+        $app->reply->exception($exception);
+        return;
+    }
+    return $schema;
+}
 sub schema_info($self, $schema) {
 
     my $db = { sources => [] };
