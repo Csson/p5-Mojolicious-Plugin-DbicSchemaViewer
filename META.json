@@ -458,7 +458,7 @@
             "class" : "Dist::Zilla::Plugin::Git::Contributors",
             "config" : {
                "Dist::Zilla::Plugin::Git::Contributors" : {
-                  "git --version" : "1.9.1",
+                  "git --version" : "2.9.3",
                   "include_authors" : 0,
                   "include_releaser" : 1,
                   "order_by" : "name",

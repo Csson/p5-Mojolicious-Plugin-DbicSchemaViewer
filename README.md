@@ -13,7 +13,7 @@ Mojolicious::Plugin::DbicSchemaViewer - Viewer for DBIx::Class schema definition
 
 # VERSION
 
-Version 0.0103, released 2016-09-05.
+Version 0.0103, released 2016-09-12.
 
 # SYNOPSIS
 

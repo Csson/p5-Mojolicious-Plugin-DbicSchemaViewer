@@ -20,6 +20,9 @@ my %WriteMakefileArgs = (
     "File::ShareDir::Install" => "0.06"
   },
   "DISTNAME" => "Mojolicious-Plugin-DbicSchemaViewer",
+  "EXE_FILES" => [
+    "bin/dbic-schema-viewer"
+  ],
   "LICENSE" => "perl",
   "MIN_PERL_VERSION" => "5.020000",
   "NAME" => "Mojolicious::Plugin::DbicSchemaViewer",
