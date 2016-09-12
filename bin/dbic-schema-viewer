@@ -25,7 +25,7 @@ my $confile = $confdir->child('dbic-schema-viewer.conf');
 # setup config file if it doesn't exist
 if(!$confile->exists) {
     app->log->debug('[dbic-schema-viewer] Setting up config file at ' . $confile->stringify);
-    my $secret = String::Random->new->randpattern('s' x 20);
+    my $secret = String::Random->new->randregex('[a-z0-9_]{20,20}');
     $confile->spew(stomp qi!
         {
             dbic_schema_viewer => {
