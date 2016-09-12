@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>DbicSchemaViewer - <%= $schema_name %></title>
+        <title>DbicSchemaViewer - <%= $title %></title>
         %= bootstrap 'allq'
         <link rel="stylesheet" href="/dbic-schema-viewer/svg.css" type="text/css" />
     </head>
@@ -11,9 +11,14 @@
                     container => 'normal',
                     nav => [
                         items => [
-                            ['Overview', [url_for('home')->query(schema => $c->param('schema'))]],
+                            ['Overview', [url_for('overview')->query(schema => $c->param('schema'))]],
                             ['Visualized', [url_for('visualizer')->query(schema => $c->param('schema'))]],
-                            ['Schemas', ['#'], caret, items => [map { [$_, [url_for(current_route('error') ? 'home' : current_route)->query(schema => $_)] ] } (sort keys %{ $all_schemas }) ] ],
+                            ['Schemas', ['#'], caret, items => [
+                                    (map { [$_, [url_for((current_route('error') ? 'overview' : current_route), schema => $_)] ] } (sort keys %{ $all_schemas })),
+                                    [],
+                                    ['Refresh all schemas', [url_for('refresh', schema => $c->param('schema'))->query(redirect_to => current_route)]],
+                                ],
+                            ],
                         ],
                     ],
                     nav => [

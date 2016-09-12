@@ -64,18 +64,18 @@ sub register($self, $app, $conf) {
     my $base = $router->get($url);
 
     # home / schema
-    $base->get('/')->to(cb => sub ($c) {
+    $base->get('/:schema')->to(cb => sub ($c) {
         my $schema = $self->get_schema($app, $c);
 
-        $c->redirect_to('error') && return if !defined $schema;
+        $c->redirect_to('home', bad_schema => 1) && return if !defined $schema;
 
-        $self->render($c, 'schema', db => $self->schema_info($schema), schema_name => ref $schema);
-    })->name('home');
+        $self->render($c, 'overview', db => $self->schema_info($schema), title => ref $schema);
+    })->name('overview');
 
     # visualizer
-    $base->get('visualizer')->to(cb => sub ($c) {
+    $base->get('visualizer/:schema')->to(cb => sub ($c) {
         my $schema = $self->get_schema($app, $c);
-        $c->redirect_to('error') && return if !defined $schema;
+        $c->redirect_to('home', bad_schema => 1) && return if !defined $schema;
 
         my(%wanted_result_source_names, %skip_result_source_names);
 
@@ -89,7 +89,7 @@ sub register($self, $app, $conf) {
         }
 
         $self->render($c, 'visualizer',
-            schema_name => ref $schema,
+            title => ref $schema,
             svg => DBIx::Class::Visualizer->new(
                       schema => $schema,
                       %wanted_result_source_names,
@@ -99,10 +99,18 @@ sub register($self, $app, $conf) {
         );
     })->name('visualizer');
 
-    # error
-    $base->get('error')->to(cb => sub ($c) {
-        $self->render($c, 'error', schema_name => 'Error');
-    })->name('error');
+    # Reconnect all schemas, useful when schemas are updated.
+    $base->get('refresh')->to(cb => sub ($c) {
+        foreach my $schema (keys $self->schemas->%*)  {
+            $self->schemas->{ $schema } = $schema->connect;
+        }
+        $c->redirect_to($c->param('redirect_to'), schema => $c->param('schema'));
+    });
+
+    # home
+    $base->get('/')->to(cb => sub ($c) {
+        $self->render($c, 'home', title => 'Home', bad_schema => $c->param('bad_schema'));
+    }, bad_schema => 0)->name('home');
 
 }
 
