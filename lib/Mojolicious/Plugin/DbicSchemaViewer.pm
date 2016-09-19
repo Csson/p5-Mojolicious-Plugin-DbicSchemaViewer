@@ -289,20 +289,21 @@ __END__
 
 =head1 DESCRIPTION
 
-This plugin is a viewer for L<DBIx::Class> schemata. It lists all C<ResultSources> with column definitions and and their relationships. See C<examples/example.html> for
-an example (also available on L<Github|http://htmlpreview.github.io/?https://github.com/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer/blob/master/examples/example.html>).
+This plugin is a definition viewer for L<DBIx::Class> schemas. It currently offers two different views on the schema:
 
-Optionally, if L<DBIx::Class::Visualizer> is installed, a graphical representation of the schema can be rendered using L<GraphViz2>.
+=for :list
+* It lists all C<ResultSources> with column definitions and and their relationships in table form.
+* It uses  L<DBIx::Class::Visualizer> to generate an entity-relationship model.
 
 =head2 Configuration
 
 The following settings are available. It is recommended to use either L</router> or L</condition> to place the viewer behind some kind of authorization check.
 
-=head3 schema
+=head3 allowed_schemas
 
-Mandatory.
+An optional array reference consisting of schema classes. If set, only these classes are available for viewing.
 
-An instance of a C<DBIx::Class::Schema> class.
+If not set, all findable schema classes can be viewed.
 
 =head3 url
 
@@ -316,6 +317,8 @@ By default, the viewer is located at C</dbic-schema-viewer>.
     });
 
 The viewer is instead located at C</the-schema>.
+
+Note that the CSS and Javascript files are served under C</dbic-schema-viewer> regardless of this setting.
 
 =head3 router
 
@@ -347,3 +350,7 @@ Use this when you have a named condition you which to place the viewer behind:
         condition => 'random',
         schema => Your::Schema->connect(...),
     });
+
+=head1 DEMO
+
+There is a demo available at L<http://dsv.code301.com/>.
