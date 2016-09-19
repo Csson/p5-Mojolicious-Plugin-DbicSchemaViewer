@@ -156,9 +156,21 @@ $(document).ready(function() {
             }
             window.location = paramToQueryString(params);
         }
+        // k -> Redraws with the current wanted/skipped, but toggle only_keys
+        else if(isKey(e, 'K')) {
+            var params = allParams();
+
+            if(params['only_keys'] !== undefined && params['only_keys'] === '1') {
+                params['only_keys'] = 0;
+            }
+            else {
+                params['only_keys'] = 1;
+            }
+            window.location = paramToQueryString(params);
+        }
         // q -> back to overall visualization
         else if(isKey(e, 'Q')) {
-            window.location = '?schema=' + param('schema');
+            window.location = '?';
         }
         // 0..9 -> degrees_of_separation
         else if(e.keyCode >= 48 && e.keyCode <= 57) {

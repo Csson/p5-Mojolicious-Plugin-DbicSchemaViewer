@@ -118,6 +118,10 @@
                             <td>Remove all highlights, but don't reload. The tables that was marked <var>wanted</var> or <var>skipped</var> at the last reload will remain so.</td>
                         </tr>
                         <tr>
+                            <th>[k]</th>
+                            <td>Toggles between showing only primary and foreign keys, and showing all columns.</td>
+                        </tr>
+                        <tr>
                             <th>[q]</th>
                             <td>Show the whole schema and remove all highlights and the <var>wanted</var>, <var>skipped</var> and <var>degrees of separation</var> settings.</td>
                         </tr>
