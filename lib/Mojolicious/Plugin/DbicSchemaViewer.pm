@@ -8,6 +8,7 @@ package Mojolicious::Plugin::DbicSchemaViewer;
 our $VERSION = '0.0103';
 
 use Mojo::Base 'Mojolicious::Plugin';
+use Mojo::Home;
 use File::ShareDir 'dist_dir';
 use Path::Tiny;
 use Data::Dump::Streamer;
@@ -42,8 +43,16 @@ sub register($self, $app, $conf) {
             }
         }
     }
+
+    # set MOJO_DBIC_SCHEMA_VIEWER_LOCAL to a true value to use the template in the distribution
+    # rather than those installed
+    my $dirroot = $ENV{'MOJO_DBIC_SCHEMA_VIEWER_LOCAL'} ? path(Mojo::Home->new->rel_dir('share'))
+                                                        : path(dist_dir('Mojolicious-Plugin-DbicSchemaViewer'))
+                                                        ;
+
+
     # add our template directory
-    my $template_dir = path(dist_dir('Mojolicious-Plugin-DbicSchemaViewer'))->child('templates');
+    my $template_dir = $dirroot->child('templates');
 
     if($template_dir->is_dir) {
         push $app->renderer->paths->@* => $template_dir->realpath;
@@ -57,7 +66,7 @@ sub register($self, $app, $conf) {
 
     my $url = $conf->{'url'} || 'dbic-schema-viewer';
 
-    push @{ $app->static->paths }, path(dist_dir('Mojolicious-Plugin-DbicSchemaViewer'))->child('public')->stringify;
+    push @{ $app->static->paths }, $dirroot->child('public')->stringify;
 
 
     # Routes
