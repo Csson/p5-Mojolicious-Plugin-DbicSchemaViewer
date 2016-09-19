@@ -354,4 +354,10 @@ Use this when you have a named condition you which to place the viewer behind:
 
 =head1 DEMO
 
-There is a demo available at L<http://dsv.code301.com/>.
+There is a demo available at L<http://dsv.code301.com/MadeUp::Book::Schema>.
+
+=head1 SEE ALSO
+
+=for :list
+* C<dbic-schema-viewer> - a small example application (in C</bin>)
+* L<DBIx::Class::Visualizer>
