@@ -76,7 +76,11 @@ sub register($self, $app, $conf) {
     $base->get('/:schema')->to(cb => sub ($c) {
         my $schema = $self->get_schema($app, $c);
 
-        $c->redirect_to('home', bad_schema => 1) && return if !defined $schema;
+        if(!defined $schema) {
+            $c->flash(bad_schema => 1);
+            $c->redirect_to('home');
+            return;
+        }
 
         $self->render($c, 'overview', db => $self->schema_info($schema), title => ref $schema);
     })->name('overview');
@@ -84,7 +88,11 @@ sub register($self, $app, $conf) {
     # visualizer
     $base->get('visualizer/:schema')->to(cb => sub ($c) {
         my $schema = $self->get_schema($app, $c);
-        $c->redirect_to('home', bad_schema => 1) && return if !defined $schema;
+        if(!defined $schema) {
+            $c->flash(bad_schema => 1);
+            $c->redirect_to('home');
+            return;
+        }
 
         my(%wanted_result_source_names, %skip_result_source_names);
 
@@ -109,17 +117,21 @@ sub register($self, $app, $conf) {
     })->name('visualizer');
 
     # Reconnect all schemas, useful when schemas are updated.
-    $base->get('refresh')->to(cb => sub ($c) {
+    $base->get('refresh/:schema/:destination')->to(cb => sub ($c) {
         foreach my $schema (keys $self->schemas->%*)  {
-            $self->schemas->{ $schema } = $schema->connect;
+            if(eval "require $schema") {
+                $c->app->log->debug(qq{M::P::DbicSchemaViewer reconnects with $schema});
+                $self->schemas->{ $schema } = $schema->connect;
+            }
         }
-        $c->redirect_to($c->param('redirect_to'), schema => $c->param('schema'));
-    });
+        $c->redirect_to($c->param('destination'));
+    })->name('refresh');
 
     # home
     $base->get('/')->to(cb => sub ($c) {
+        $c->redirect_to('overview', schema => $c->param('schema')) && return if $c->param('schema');
         $self->render($c, 'home', title => 'Home', bad_schema => $c->param('bad_schema'));
-    }, bad_schema => 0)->name('home');
+    })->name('home');
 
 }
 
