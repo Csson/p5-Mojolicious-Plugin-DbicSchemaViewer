@@ -13,7 +13,7 @@ Mojolicious::Plugin::DbicSchemaViewer - Viewer for DBIx::Class schema definition
 
 # VERSION
 
-Version 0.0103, released 2016-09-12.
+Version 0.0103, released 2016-09-19.
 
 # SYNOPSIS
 
@@ -23,20 +23,20 @@ Version 0.0103, released 2016-09-12.
 
 # DESCRIPTION
 
-This plugin is a viewer for [DBIx::Class](https://metacpan.org/pod/DBIx::Class) schemata. It lists all `ResultSources` with column definitions and and their relationships. See `examples/example.html` for
-an example (also available on [Github](http://htmlpreview.github.io/?https://github.com/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer/blob/master/examples/example.html)).
+This plugin is a definition viewer for [DBIx::Class](https://metacpan.org/pod/DBIx::Class) schemas. It currently offers two different views on the schema:
 
-Optionally, if [DBIx::Class::Visualizer](https://metacpan.org/pod/DBIx::Class::Visualizer) is installed, a graphical representation of the schema can be rendered using [GraphViz2](https://metacpan.org/pod/GraphViz2).
+- It lists all `ResultSources` with column definitions and and their relationships in table form.
+- It uses  [DBIx::Class::Visualizer](https://metacpan.org/pod/DBIx::Class::Visualizer) to generate an entity-relationship model.
 
 ## Configuration
 
 The following settings are available. It is recommended to use either ["router"](#router) or ["condition"](#condition) to place the viewer behind some kind of authorization check.
 
-### schema
+### allowed\_schemas
 
-Mandatory.
+An optional array reference consisting of schema classes. If set, only these classes are available for viewing.
 
-An instance of a `DBIx::Class::Schema` class.
+If not set, all findable schema classes can be viewed.
 
 ### url
 
@@ -50,6 +50,8 @@ By default, the viewer is located at `/dbic-schema-viewer`.
     });
 
 The viewer is instead located at `/the-schema`.
+
+Note that the CSS and Javascript files are served under `/dbic-schema-viewer` regardless of this setting.
 
 ### router
 
@@ -81,6 +83,15 @@ Use this when you have a named condition you which to place the viewer behind:
         condition => 'random',
         schema => Your::Schema->connect(...),
     });
+
+# DEMO
+
+There is a demo available at [http://dsv.code301.com/MadeUp::Book::Schema](http://dsv.code301.com/MadeUp::Book::Schema).
+
+# SEE ALSO
+
+- `dbic-schema-viewer` - a small example application (in `/bin`)
+- [DBIx::Class::Visualizer](https://metacpan.org/pod/DBIx::Class::Visualizer)
 
 # SOURCE
 

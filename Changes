@@ -4,17 +4,18 @@ Revision history for Mojolicious-Plugin-DbicSchemaViewer
  [API Changes]
 
  [Bug Fixes]
- - Fixed a missing html closing tag in the output.
 
  [Documentation]
 
  [Enhancements]
 
  [New Features]
+  - The visualizer tab reimplemented to use improved DBIx::Class::Visualizer.
 
  [Other Changes]
 
  [Requirements]
+  - DBIx::Class::Visualizer is now required.
 
  [Stats & Dependency Changes]
 

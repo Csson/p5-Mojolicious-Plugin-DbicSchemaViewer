@@ -1,12 +1,14 @@
-# This file was auto-generated from iller.yaml by Dist::Iller on 2016-09-11 11:50:12 UTC.
+# This file was auto-generated from iller.yaml by Dist::Iller on 2016-09-19 22:16:38 UTC.
 
 on runtime => sub {
+    requires 'DBIx::Class::Visualizer' => '0';
     requires 'Data::Dump::Streamer' => '0';
     requires 'DateTime::Tiny' => '1.06';
-    requires 'File::ShareDir::Tarball' => '0';
+    requires 'File::ShareDir' => '1.102';
     requires 'Mojolicious' => '6.00';
     requires 'Mojolicious::Plugin::BootstrapHelpers' => '0.0201';
     requires 'Path::Tiny' => '0.072';
+    requires 'PerlX::Maybe' => '1.001';
     requires 'Safe::Isa' => '1.000005';
     requires 'experimental' => '0';
     requires 'perl' => '5.020000';
@@ -73,7 +75,7 @@ on develop => sub {
     requires 'Dist::Zilla::Plugin::ReadmeAnyFromPod' => '0.150250';
     requires 'Dist::Zilla::Plugin::RewriteVersion::Transitional' => '0.007';
     requires 'Dist::Zilla::Plugin::RunExtraTests' => '0.028';
-    requires 'Dist::Zilla::Plugin::ShareDir::Tarball' => '0';
+    requires 'Dist::Zilla::Plugin::ShareDir' => '0';
     requires 'Dist::Zilla::Plugin::Test::Compile' => '2.054';
     requires 'Dist::Zilla::Plugin::Test::EOF' => '0.0501';
     requires 'Dist::Zilla::Plugin::Test::EOL' => '0.18';

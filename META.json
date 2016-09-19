@@ -119,7 +119,7 @@
             "DBIx::Class::Visualizer" : "0",
             "Data::Dump::Streamer" : "0",
             "DateTime::Tiny" : "1.06",
-            "File::ShareDir::Tarball" : "0",
+            "File::ShareDir" : "1.102",
             "Mojolicious" : "6.00",
             "Mojolicious::Plugin::BootstrapHelpers" : "0.0201",
             "Path::Tiny" : "0.072",
