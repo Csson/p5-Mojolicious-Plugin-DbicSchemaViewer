@@ -15,14 +15,15 @@
             %>
     %   }
 
-    <p>If you already tried to enter a schema class something went wrong. Reasons include:</p>
-    <ul>
-        <li>The schema is not in PERL5LIB</li>
-        <li>It is not a DBIx::Class schema</li>
-        <li>The name is misspelled.</li>
-        <li>No schema name was entered.</li>
-    </ul>
+    %   if(flash 'bad_schema') {
+            <p style="margin-top: 30px;">If you already tried to enter a schema class something went wrong. Reasons include:</p>
+            <ul>
+                <li>The schema is not in PERL5LIB</li>
+                <li>It is not a DBIx::Class schema</li>
+                <li>The name is misspelled.</li>
+                <li>No schema name was entered.</li>
+            </ul>
 
-    <p>See the log file for more information.</p>
-
+            <p>See the log file for more information.</p>
+    %   }
 </div>

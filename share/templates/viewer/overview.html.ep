@@ -2,7 +2,7 @@
 %   use List::Util 'any';
 
 <div class="container">
-    <h1>Schema documentation for <%= $schema_name %></h1>
+    <h1>Schema documentation for <%= $title %></h1>
 
 %   foreach my $rc ($db->{'sources'}->@*) {
 %       my $columns = $rc->{'columns'};

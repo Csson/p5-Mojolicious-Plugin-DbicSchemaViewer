@@ -7,16 +7,16 @@
         <link rel="stylesheet" href="/dbic-schema-viewer/svg.css" type="text/css" />
     </head>
     <body data-url-home="<%= url_for 'schema' %>">
-        <%= navbar  header => ['DbicSchemaViewer', ['#'], hamburger],
+        <%= navbar  header => ['DbicSchemaViewer', ['home'], hamburger],
                     container => 'normal',
                     nav => [
                         items => [
-                            ['Overview', [url_for('overview')->query(schema => $c->param('schema'))]],
-                            ['Visualized', [url_for('visualizer')->query(schema => $c->param('schema'))]],
+                            ['Overview', ['overview']],
+                            ['Visualized', ['visualizer']],
                             ['Schemas', ['#'], caret, items => [
                                     (map { [$_, [url_for((current_route('error') ? 'overview' : current_route), schema => $_)] ] } (sort keys %{ $all_schemas })),
                                     [],
-                                    ['Refresh all schemas', [url_for('refresh', schema => $c->param('schema'))->query(redirect_to => current_route)]],
+                                    ['Refresh all schemas', ['refresh', destination => current_route]],
                                 ],
                             ],
                         ],
