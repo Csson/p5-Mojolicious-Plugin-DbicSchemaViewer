@@ -15,8 +15,8 @@ plugin 'DbicSchemaViewer';
 
 my $t = Test::Mojo->new;
 
-$t->get_ok("/dbic-schema-viewer?schema=$schema")->status_is(200);
-my $tok = $t->get_ok("/dbic-schema-viewer?schema=$schema")->status_is(200);
+$t->get_ok("/dbic-schema-viewer/$schema")->status_is(200);
+my $tok = $t->get_ok("/dbic-schema-viewer/$schema")->status_is(200);
 
 $tok->content_like(qr/for TestFor::DbicVisualizer::Schema/);
 $tok->content_like(qr/missing reverse/i);
