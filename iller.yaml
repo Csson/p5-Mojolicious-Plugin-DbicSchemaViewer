@@ -10,16 +10,19 @@ prereqs:
      - perl: 5.020000
      - Mojolicious: 6.00
      - File::ShareDir
+     - File::HomeDir
      - Path::Tiny
      - Data::Dump::Streamer
      - Safe::Isa
+     - Syntax::Feature::Qi
+     - String::Stomp
+     - String::Random
      - experimental
      - DateTime::Tiny: 1.06
      - Mojolicious::Plugin::BootstrapHelpers: 0.0201
      - DBIx::Class::Visualizer
      - PerlX::Maybe
-    recommended:
-     - DBIx::Class::Visualizer: 0.0100
+     - DBIx::Class::Visualizer: 0.0200
 
   test:
     requires:
