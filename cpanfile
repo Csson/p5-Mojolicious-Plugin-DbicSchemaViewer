@@ -1,15 +1,19 @@
-# This file was auto-generated from iller.yaml by Dist::Iller on 2016-09-19 22:16:38 UTC.
+# This file was auto-generated from iller.yaml by Dist::Iller on 2016-09-20 09:26:58 UTC.
 
 on runtime => sub {
-    requires 'DBIx::Class::Visualizer' => '0';
+    requires 'DBIx::Class::Visualizer' => '0.0200';
     requires 'Data::Dump::Streamer' => '0';
     requires 'DateTime::Tiny' => '1.06';
+    requires 'File::HomeDir' => '0';
     requires 'File::ShareDir' => '1.102';
     requires 'Mojolicious' => '6.00';
     requires 'Mojolicious::Plugin::BootstrapHelpers' => '0.0201';
     requires 'Path::Tiny' => '0.072';
     requires 'PerlX::Maybe' => '1.001';
     requires 'Safe::Isa' => '1.000005';
+    requires 'String::Random' => '0';
+    requires 'String::Stomp' => '0';
+    requires 'Syntax::Feature::Qi' => '0';
     requires 'experimental' => '0';
     requires 'perl' => '5.020000';
 };

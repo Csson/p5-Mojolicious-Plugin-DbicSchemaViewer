@@ -116,15 +116,19 @@
       },
       "runtime" : {
          "requires" : {
-            "DBIx::Class::Visualizer" : "0",
+            "DBIx::Class::Visualizer" : "0.0200",
             "Data::Dump::Streamer" : "0",
             "DateTime::Tiny" : "1.06",
+            "File::HomeDir" : "0",
             "File::ShareDir" : "1.102",
             "Mojolicious" : "6.00",
             "Mojolicious::Plugin::BootstrapHelpers" : "0.0201",
             "Path::Tiny" : "0.072",
             "PerlX::Maybe" : "1.001",
             "Safe::Isa" : "1.000005",
+            "String::Random" : "0",
+            "String::Stomp" : "0",
+            "Syntax::Feature::Qi" : "0",
             "experimental" : "0",
             "perl" : "5.020000"
          }
