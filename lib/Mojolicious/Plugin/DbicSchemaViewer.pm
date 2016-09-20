@@ -5,7 +5,7 @@ package Mojolicious::Plugin::DbicSchemaViewer;
 
 # ABSTRACT: Viewer for DBIx::Class schema definitions
 # AUTHORITY
-our $VERSION = '0.0103';
+our $VERSION = '0.0201';
 
 use Mojo::Base 'Mojolicious::Plugin';
 use Mojo::Home;

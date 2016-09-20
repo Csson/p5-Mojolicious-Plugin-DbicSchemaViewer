@@ -5,7 +5,7 @@ use warnings;
 # ABSTRACT: Example application
 # AUTHORITY
 # PODNAME: dbic-schema-viewer
-our $VERSION = '0.0103';
+our $VERSION = '0.0201';
 
 use Mojolicious::Lite;
 use File::HomeDir;
