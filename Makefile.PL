@@ -38,7 +38,7 @@ my %WriteMakefileArgs = (
     "PerlX::Maybe" => "1.001",
     "Safe::Isa" => "1.000005",
     "String::Random" => 0,
-    "String::Stomp" => 0,
+    "String::Stomp" => "0.0102",
     "Syntax::Feature::Qi" => 0,
     "experimental" => 0
   },
@@ -76,7 +76,7 @@ my %FallbackPrereqs = (
   "PerlX::Maybe" => "1.001",
   "Safe::Isa" => "1.000005",
   "String::Random" => 0,
-  "String::Stomp" => 0,
+  "String::Stomp" => "0.0102",
   "Syntax::Feature::Qi" => 0,
   "Test::Deep" => 0,
   "Test::Mojo" => 0,

@@ -1,4 +1,4 @@
-# This file was auto-generated from iller.yaml by Dist::Iller on 2016-09-20 09:26:58 UTC.
+# This file was auto-generated from iller.yaml by Dist::Iller on 2016-09-20 13:11:20 UTC.
 
 on runtime => sub {
     requires 'DBIx::Class::Visualizer' => '0.0200';
@@ -12,7 +12,7 @@ on runtime => sub {
     requires 'PerlX::Maybe' => '1.001';
     requires 'Safe::Isa' => '1.000005';
     requires 'String::Random' => '0';
-    requires 'String::Stomp' => '0';
+    requires 'String::Stomp' => '0.0102';
     requires 'Syntax::Feature::Qi' => '0';
     requires 'experimental' => '0';
     requires 'perl' => '5.020000';
@@ -44,7 +44,7 @@ on develop => sub {
     requires 'Dist::Zilla' => '5.000';
     requires 'Dist::Zilla::Plugin::Authority' => '1.009';
     requires 'Dist::Zilla::Plugin::BumpVersionAfterRelease::Transitional' => '0.007';
-    requires 'Dist::Zilla::Plugin::ChangeStats::Dependencies::Git' => '0.0100';
+    requires 'Dist::Zilla::Plugin::ChangeStats::Dependencies::Git' => '0.0200';
     requires 'Dist::Zilla::Plugin::CheckChangesHasContent' => '0.008';
     requires 'Dist::Zilla::Plugin::Clean' => '0.07';
     requires 'Dist::Zilla::Plugin::ConfirmRelease' => '0';
