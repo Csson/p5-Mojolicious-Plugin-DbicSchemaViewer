@@ -6,15 +6,15 @@ Mojolicious::Plugin::DbicSchemaViewer - Viewer for DBIx::Class schema definition
     <p>
     <img src="https://img.shields.io/badge/perl-5.20+-blue.svg" alt="Requires Perl 5.20+" />
     <a href="https://travis-ci.org/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer"><img src="https://api.travis-ci.org/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer.svg?branch=master" alt="Travis status" /></a>
-    <a href="http://cpants.cpanauthors.org/release/CSSON/Mojolicious-Plugin-DbicSchemaViewer-0.0200"><img src="http://badgedepot.code301.com/badge/kwalitee/CSSON/Mojolicious-Plugin-DbicSchemaViewer/0.0200" alt="Distribution kwalitee" /></a>
-    <a href="http://matrix.cpantesters.org/?dist=Mojolicious-Plugin-DbicSchemaViewer%200.0200"><img src="http://badgedepot.code301.com/badge/cpantesters/Mojolicious-Plugin-DbicSchemaViewer/0.0200" alt="CPAN Testers result" /></a>
+    <a href="http://cpants.cpanauthors.org/release/CSSON/Mojolicious-Plugin-DbicSchemaViewer-0.0103"><img src="http://badgedepot.code301.com/badge/kwalitee/CSSON/Mojolicious-Plugin-DbicSchemaViewer/0.0103" alt="Distribution kwalitee" /></a>
+    <a href="http://matrix.cpantesters.org/?dist=Mojolicious-Plugin-DbicSchemaViewer%200.0103"><img src="http://badgedepot.code301.com/badge/cpantesters/Mojolicious-Plugin-DbicSchemaViewer/0.0103" alt="CPAN Testers result" /></a>
     <img src="https://img.shields.io/badge/coverage-59.0%-red.svg" alt="coverage 59.0%" />
     </p>
 </div>
 
 # VERSION
 
-Version 0.0200, released 2016-09-20.
+Version 0.0103, released 2016-09-20.
 
 # SYNOPSIS
 
