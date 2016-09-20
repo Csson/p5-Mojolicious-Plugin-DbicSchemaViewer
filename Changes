@@ -6,21 +6,44 @@ Revision history for Mojolicious-Plugin-DbicSchemaViewer
  [Bug Fixes]
 
  [Documentation]
-  - The included static example file has been replaced with an online demo.
 
  [Enhancements]
 
  [New Features]
-  - The visualizer tab reimplemented to use improved DBIx::Class::Visualizer.
 
  [Other Changes]
 
  [Requirements]
-  - DBIx::Class::Visualizer is now required.
 
  [Stats & Dependency Changes]
 
  [Testing]
+
+0.0200 2016-09-20T15:42:06Z UTC
+ [Documentation]
+ - The included static example file has been replaced with an online demo.
+
+ [New Features]
+ - The visualizer tab reimplemented to use improved
+   DBIx::Class::Visualizer.
+
+ [Requirements]
+ - DBIx::Class::Visualizer is now required.
+
+ [Stats & Dependency Changes]
+ - 18 files changed, 953 insertions(+), 449 deletions(-)
+ - (run req) + DBIx::Class::Visualizer 0.0200
+ - (run req) + File::HomeDir (any)
+ - (run req) + File::ShareDir 1.102
+ - (run req) + PerlX::Maybe 1.001
+ - (run req) + String::Random (any)
+ - (run req) + String::Stomp 0.0102
+ - (run req) + Syntax::Feature::Qi (any)
+ - (run req) - File::ShareDir::Tarball
+ - (dev req) + Dist::Zilla::Plugin::ShareDir (any)
+ - (dev req) ~ Dist::Zilla::Plugin::ChangeStats::Dependencies::Git 0.0100
+   --> 0.0200
+ - (dev req) - Dist::Zilla::Plugin::ShareDir::Tarball
 
 0.0102 2016-09-04T20:50:39Z UTC
  [Documentation]
