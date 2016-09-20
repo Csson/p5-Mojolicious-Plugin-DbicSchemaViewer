@@ -42,7 +42,7 @@ plugins:
      - sudo apt-get install -y graphviz
     pre_install:
      - cpanm GraphViz2
-     - cpanm  git://github.com:Csson/p5-Dist-Zilla-Plugin-ChangeStats-Dependencies-Git.git@develop
+     - cpanm  git://github.com/Csson/p5-Dist-Zilla-Plugin-ChangeStats-Dependencies-Git.git@develop
 
 ---
 doctype: weaver
