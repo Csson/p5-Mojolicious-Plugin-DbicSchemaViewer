@@ -15,12 +15,16 @@ use String::Stomp;
 use String::Random;
 
 my $confdir = path(File::HomeDir->my_dist_data('Mojolicious-Plugin-DbicSchemaViewer', { create => 1 }));
+my $logdir = $confdir->child('log');
+$logdir->mkpath;
+app->log->path($logdir->child('dbic-schema-viewer.log')->stringify);
 
 my $exists = $confdir->exists && $confdir->is_dir ? 1 : 0;
 
 app->log->debug("[dbic-schema-viewer] Looking for config in $confdir/dbic-schema-viewer.conf ...");
 
 my $confile = $confdir->child('dbic-schema-viewer.conf');
+app->log->path('log');
 
 # setup config file if it doesn't exist
 if(!$confile->exists) {
@@ -47,3 +51,18 @@ app->config->{'dbic-schema-viewer'}{'url'} = '/' if !exists app->config->{'dbic-
 plugin 'DbicSchemaViewer', app->config->{'dbic_schema_viewer'};
 
 app->start;
+
+=pod
+
+=encoding utf-8
+
+=head1 SYNOPSIS
+
+    hypnotoad dbic-schema-viewer
+
+=head1 DESCRIPTION
+
+    This is a small application that uses the L<Mojolicious::Plugin::DbicSchemaViewer>. A configuration file will be generated
+    at first run.
+
+    It is this application that runs the L<demo|http://dsv.code301.com/MadeUp::Book::Schema>.
