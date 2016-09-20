@@ -33,6 +33,11 @@ plugins:
 
   - +extend_plugin: TravisYML
     perl_version: 5.20
+    sudo: 1
+    post_before_install:
+     - sudo apt-get update -qq
+     - sudo apt-get install -y graphviz
+    pre_install: cpanm GraphViz2
 
 ---
 doctype: weaver
