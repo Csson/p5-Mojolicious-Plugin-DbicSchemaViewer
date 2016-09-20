@@ -8,6 +8,7 @@ Mojolicious::Plugin::DbicSchemaViewer - Viewer for DBIx::Class schema definition
     <a href="https://travis-ci.org/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer"><img src="https://api.travis-ci.org/Csson/p5-Mojolicious-Plugin-DbicSchemaViewer.svg?branch=master" alt="Travis status" /></a>
     <a href="http://cpants.cpanauthors.org/release/CSSON/Mojolicious-Plugin-DbicSchemaViewer-0.0103"><img src="http://badgedepot.code301.com/badge/kwalitee/CSSON/Mojolicious-Plugin-DbicSchemaViewer/0.0103" alt="Distribution kwalitee" /></a>
     <a href="http://matrix.cpantesters.org/?dist=Mojolicious-Plugin-DbicSchemaViewer%200.0103"><img src="http://badgedepot.code301.com/badge/cpantesters/Mojolicious-Plugin-DbicSchemaViewer/0.0103" alt="CPAN Testers result" /></a>
+    <img src="https://img.shields.io/badge/coverage-59.0%-red.svg" alt="coverage 59.0%" />
     </p>
 </div>
 
@@ -25,7 +26,7 @@ Version 0.0103, released 2016-09-20.
 
 This plugin is a definition viewer for [DBIx::Class](https://metacpan.org/pod/DBIx::Class) schemas. It currently offers two different views on the schema:
 
-- It lists all `ResultSources` with column definitions and and their relationships in table form.
+- It lists all result sources with column definitions and and their relationships in table form.
 - It uses  [DBIx::Class::Visualizer](https://metacpan.org/pod/DBIx::Class::Visualizer) to generate an entity-relationship model.
 
 ## Configuration
@@ -86,11 +87,11 @@ Use this when you have a named condition you which to place the viewer behind:
 
 # DEMO
 
-There is a demo available at [http://dsv.code301.com/MadeUp::Book::Schema](http://dsv.code301.com/MadeUp::Book::Schema).
+There is a demo available at [http://dsv.code301.com/MadeUp::Book::Schema](http://dsv.code301.com/MadeUp::Book::Schema). Don't miss the help page for instructions.
 
 # SEE ALSO
 
-- `dbic-schema-viewer` - a small example application (in `/bin`)
+- `dbic-schema-viewer` - a small application (in `/bin`) for running this plugin standalone.
 - [DBIx::Class::Visualizer](https://metacpan.org/pod/DBIx::Class::Visualizer)
 
 # SOURCE

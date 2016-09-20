@@ -6,6 +6,7 @@ Revision history for Mojolicious-Plugin-DbicSchemaViewer
  [Bug Fixes]
 
  [Documentation]
+  - The included static example file has been replaced with an online demo.
 
  [Enhancements]
 

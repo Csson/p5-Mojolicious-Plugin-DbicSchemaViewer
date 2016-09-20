@@ -293,7 +293,7 @@ __END__
 This plugin is a definition viewer for L<DBIx::Class> schemas. It currently offers two different views on the schema:
 
 =for :list
-* It lists all C<ResultSources> with column definitions and and their relationships in table form.
+* It lists all result sources with column definitions and and their relationships in table form.
 * It uses  L<DBIx::Class::Visualizer> to generate an entity-relationship model.
 
 =head2 Configuration
@@ -354,10 +354,10 @@ Use this when you have a named condition you which to place the viewer behind:
 
 =head1 DEMO
 
-There is a demo available at L<http://dsv.code301.com/MadeUp::Book::Schema>.
+There is a demo available at L<http://dsv.code301.com/MadeUp::Book::Schema>. Don't miss the help page for instructions.
 
 =head1 SEE ALSO
 
 =for :list
-* C<dbic-schema-viewer> - a small example application (in C</bin>)
+* C<dbic-schema-viewer> - a small application (in C</bin>) for running this plugin standalone.
 * L<DBIx::Class::Visualizer>
