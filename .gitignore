@@ -10,3 +10,4 @@ MYMETA.*
 /.prove
 /Mojolicious-Plugin-DbicSchemaViewer-*
 .coverhistory.json
+.localscript
